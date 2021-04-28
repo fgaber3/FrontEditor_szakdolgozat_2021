@@ -1,0 +1,86 @@
+
+@using FrontEditor.Client.Models.EditorModels
+@{
+    EditorHeaderViewModel block1 = new EditorHeaderViewModel(1) {
+        ComponentId = "project-header",
+        ComponentName = "Menü",
+        Title = "Teszt projekt",
+        ColorSheme = ColorShemeEnum.Dark,
+        BackgroundColor = "DARK",
+        ContainerMode = false,
+        MobileMenu = false,
+        ShowSearchBox = true,
+        MenuItems = {
+            new MenuItem() 
+            {
+                Title = "ELSŐ MENÜPONT",
+                Href = "#",
+                TargetBlank = false
+            },
+            new MenuItem() 
+            {
+                Title = "MÁSODIK MENÜPONT",
+                Href = "#",
+                TargetBlank = false
+            },
+            new MenuItem() 
+            {
+                Title = "HARMADIK MENÜPONT",
+                Href = "#",
+                TargetBlank = false,
+                MenuItems = {                    
+                    new MenuItem() 
+                    {
+                        Title = "ELSŐ SUBMENÜPONT",
+                        Href = "#",
+                        TargetBlank = false
+                    },                                        
+                    new MenuItem() 
+                    {
+                        Title = "MÁSODIK SUBMENÜPONT",
+                        Href = "#",
+                        TargetBlank = false
+                    }
+                }
+            }
+        }
+    };
+    EditorBaseViewModel block2 = new EditorBaseViewModel("asd", 1) {
+        ComponentId = "project-footer",
+        ComponentName = "Lábrész"
+
+    };
+    EditorBaseViewModel[] modelItems = { 
+        block1,
+        block2
+    };
+}
+
+ <button type="button" class="btn btn-primary collapse-item m-2" onclick="addComponent()"><i class="fas fa-plus-circle"></i> Komponens hozzáadása</button>
+ 
+<div class="accordion" id="accordionEditor">
+    @foreach (EditorBaseViewModel block in modelItems)
+    {
+        <div class="card">
+            <div class="card-header" id="heading@(block.ComponentName)">
+                <h2 class="mb-0">
+                    <button class="btn btn-link btn-block text-left collapsed" type="button" data-toggle="collapse" data-target="#collapse@(block.ComponentName)" aria-expanded="true" aria-controls="collapse@(block.ComponentName)">
+                    @block.ComponentName
+                    </button>
+                </h2>
+            </div>
+            <div id="collapse@(block.ComponentName)" class="collapse" aria-labelledby="heading@(block.ComponentName)" data-parent="#accordionEditor">
+                <div class="card-body">                    
+                    @if(block.GetType() == typeof(EditorHeaderViewModel))
+                    {
+                        @Html.Partial("Editors/" + block.ViewName, block)             
+                    }
+                    else 
+                    {
+                        <div class="alert alert-danger" role="alert">Ismeretlen blokktípus!</div>
+                    }
+                </div>
+            </div>
+        </div>
+      }
+</div>

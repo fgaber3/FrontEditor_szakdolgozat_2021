@@ -1,0 +1,73 @@
+@model FrontEditor.Client.Models.EditorModels.EditorViewModel
+@{    
+    Layout = "_Editor";
+    ViewBag.Title = Model.ProjectData.Title + " Editor";     
+}
+
+<div id="navbar-sidebar-container">
+    @Html.Partial("_navbarSidebar", Model)
+</div>
+
+<div id="content-wrapper" class="d-flex flex-column">
+    <div id="content">
+        @Html.Partial("_navbarTop", Model)
+        <div class="container-fluid" id="editorPanelContainer">
+            @Html.Partial("_editorPanel", Model)            
+        </div>
+    </div>
+</div>
+
+<script>
+  function showMessage(title, message) {
+      $("#messageModal .modal-title").html(title);
+      $("#messageModal .modal-body").html(message);      
+      $('#messageModal').modal('show');
+    }
+</script>
+
+<!-- Message dialog! -->
+<div class="modal fade" id="messageModal" tabindex="-1" role="dialog" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title"></h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body"></div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Bezár</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Confirm delete image dialog! -->
+<div class="modal fade" id="deleteProjectImageModal" tabindex="-1" role="dialog" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Kép törlése</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+         Biztosan törli a kiválasztott képet a projektből? Ezzel csak a fájl törlődik, a hivatkozó elemek nem.
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Bezár</button>
+        <button type="button" onclick="confirmDeleteProjectImage()" class="btn btn-primary" data-dismiss="modal">Törlés</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Image edit dialog! -->
+<div class="modal fade" id="imageUploadModal" tabindex="-1" role="dialog" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+    </div>
+  </div>
+</div>

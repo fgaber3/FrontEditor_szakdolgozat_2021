@@ -1,0 +1,76 @@
+@model UserViewModel
+<div class="modal-header">
+    <h5 class="modal-title">@(Model.UserId > 0 && !Model.NewUser ? "Felhasználó szerkesztése" : "Felhasználó létrehozása ")</h5>
+    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+        <span aria-hidden="true">&times;</span>
+    </button>
+</div>
+<div class="modal-body">
+    @if(Model.DatasChanged)
+    {
+        <div class="alert alert-success" role="alert">
+            Adatok mentése sikeres! 
+            @if(Model.NewUser) 
+            {
+                <p>Az új felhasználó jelszava: @Model.NewPassword</p> 
+            }
+        </div>        
+    }    
+    else
+    {
+        <div asp-validation-summary="ModelOnly" class="alert alert-danger" role="alert"></div>
+        <form method="post" id="userDataForm">
+            <input asp-for="UserId" type="hidden" />
+            <div class="form-group">                                        
+                <label asp-for="DisplayName">@Html.DisplayNameFor(m => m.DisplayName)</label>
+                <input asp-for="DisplayName" class="form-control" />
+                <span asp-validation-for="DisplayName" class="text-danger"></span>
+            </div> 
+            <div class="form-group">                                        
+                <label asp-for="UserName">@Html.DisplayNameFor(m => m.UserName)</label>
+                <input asp-for="UserName" class="form-control" />
+                <span asp-validation-for="UserName" class="text-danger"></span>
+            </div> 
+            <div class="form-group">                                        
+                <label asp-for="Email">@Html.DisplayNameFor(m => m.Email)</label>
+                <input asp-for="Email" class="form-control" />
+                <span asp-validation-for="Email" class="text-danger"></span>
+            </div> 
+            <div class="form-group">                                        
+                <label asp-for="RoleId">@Html.DisplayNameFor(m => m.RoleId)</label>
+                <select asp-for="RoleId" class="form-control" asp-items="@(new SelectList(Model.Roles,"Value" ,"Key"))"></select>
+                <span asp-validation-for="RoleId" class="text-danger"></span>
+            </div> 
+        </form>          
+    }
+</div>
+
+<div class="modal-footer">
+    @if(Model.DatasChanged)
+    {
+        <button type="button" class="btn btn-primary" data-dismiss="modal">Rendben</button>
+    }
+    else 
+    {
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Mégse</button>
+        <button type="button" onclick="saveData()" class="btn btn-primary">Mentés</button>
+    }
+</div>
+
+<script>
+    $(document).ready(function() {
+        if("@Model.DatasChanged" == "True") {
+            reloadContent();    
+        } 
+    });
+    function saveData() {       
+        $.ajax({
+            type: "POST",
+            url: "@Url.Action("Save", "Users")",
+            data: $('#userDataForm').serialize(),
+            success: function (res) {
+                $('#createEditModal').modal('show').find('.modal-content').html(res);         
+            }
+        });
+    }
+</script>

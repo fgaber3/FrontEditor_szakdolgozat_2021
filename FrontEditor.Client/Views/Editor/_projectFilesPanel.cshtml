@@ -1,0 +1,88 @@
+@using FrontEditor.Client.Models.EditorModels
+@model EditorViewModel
+
+<h6 class="collapse-header">File feltöltés:</h6>
+ <hr />
+<button type="button" class="btn btn-primary collapse-item m-2" onclick="uploadProjectImage()">Feltöltés</button>
+<div class="file-image-list">
+    <ul class="list-group" id="imagesListGroup">
+        @foreach (string file in Model.ImageList)
+        {            
+            <li class="list-group-item" data-file="@file">
+                <small>  @(file.Length > 13  ? file.Substring(0,13) : file)</small> 
+                <label class="float-right">
+                    <i class="fas fa-eye cursor-pointer" onclick="openProjectImagePopUp('@file')"></i> 
+                    <i class="fas fa-trash-alt cursor-pointer" onclick="deleteProjectImage('@file')"></i>
+                </label>
+            </li>
+        }
+    </ul>
+</div>
+<script>
+    var deleteImage = "";
+    function uploadProjectImage() {
+       $.ajax({
+        type: "POST",
+        url: "@Url.Action("UploadImageToProject", "Editor")",
+        data: { projectId: @Model.ProjectData.ProjectId },
+        success: function (res) {      
+          $("#imageUploadModal .modal-content").html(res);      
+          $('#imageUploadModal').modal('show');      
+        }
+      });    
+    }
+
+    function addImageItem(file) {
+        if($("#imagesListGroup li[data-file='" + file + "']").length === 0) {
+            $("#imagesListGroup").append("<li class='list-group-item' data-file='" + file + "'><small>" + file.substring(0, 13) + "</small>" +
+                    "<label class='float-right'><i class='fas fa-eye cursor-pointer' onclick='openProjectImagePopUp(\"" + file + "\")'></i> " +
+                    "<i class='fas fa-trash-alt cursor-pointer' onclick='deleteProjectImage(\"" + file + "\")'></i></label></li>");
+        }
+    }
+    
+    function openProjectImagePopUp(image) {
+        showMessage("Kép előnézet", "<img src='/images/projects/@Model.ProjectData.ProjectId/" + image + "' class='w-100' />");
+    }
+        
+    function deleteProjectImage(image) {
+      deleteImage = image;
+      $('#deleteProjectImageModal').modal('show');
+    }
+
+    function confirmDeleteProjectImage() {
+        $.ajax({
+            type: "POST",
+            url: "@Url.Action("DeleteProjectImage", "Editor")",
+            data: { projectId: @Model.ProjectData.ProjectId, image: deleteImage },
+            success: function (res) {
+              if(res == "SUCCESS") {      
+                showMessage("Sikeres törlés", "<p class='text-success'>Kép törlése sikeresen megtörtént!</p>");
+                $("li[data-file='" + deleteImage + "']").remove(); 
+              }
+              else {              
+                showMessage("Hiba!", "<p class='text-danger'>Hiba a kép törlése során!<br />" + res + "</p>");
+              }
+            }
+        });    
+    }
+
+    function saveBaseDatas() {       
+        $.ajax({
+            type: "POST",
+            url: "@Url.Action("SaveHeaderData", "Editor")",
+            data: $('#headerDataForm').serialize(),
+            success: function (res) {
+                $('#projectHeaderDataFormContainer').html(res);         
+            }
+        });
+    }
+</script>
+
+<style>
+    .file-image-list ul {
+        height:200px; 
+        width:100%;
+        overflow:hidden; 
+        overflow-y:scroll;
+    }
+</style>

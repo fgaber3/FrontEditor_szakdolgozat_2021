@@ -1,0 +1,192 @@
+@model List<UserViewModel>
+@{
+    ViewBag.Title = "Felhasználók";
+    ViewBag.Container = "fluid";
+}
+
+ <div class="col-12 mb-3">
+  <div class="card">
+    <div class="card-header">
+      <button class="btn btn-primary float-left" onclick="createNewUser()"><i class="fas fa-plus"></i> Létrehozás</button>
+    </div>
+    <div class="card-body">
+      <div class="card-text" id="usersContent">
+        @Html.Partial("Content", (List<UserViewModel>)Model)        
+      </div>
+    </div>
+  </div>
+</div>  
+
+@section Scripts {
+  <script>
+    var removeUserId = 0;
+    var pwdResetId = 0;
+    
+    function createNewUser() {
+       $.ajax({
+        type: "POST",
+        url: "@Url.Action("Create", "Users")",
+        success: function (res) {
+          $("#createEditModal .modal-content").html(res);      
+          $('#createEditModal').modal('show');        
+        }
+      });    
+    }
+
+    function editUser(userId) {
+       $.ajax({
+        type: "POST",
+        url: "@Url.Action("Edit", "Users")",
+        data: { userId: userId },
+        success: function (res) {
+          $("#createEditModal .modal-content").html(res);      
+          $('#createEditModal').modal('show');      
+        }
+      });    
+    }
+
+    function resetUserPassword(userId) {      
+      pwdResetId = userId;
+      $('#pwdResetModal').modal('show');
+    }
+    function confirmPwdReset() {
+        $.ajax({
+            type: "POST",
+            url: "@Url.Action("ResetPassword", "Users")",
+            data: { userId: pwdResetId },
+            success: function (res) {
+              console.log(res);
+              if(res.ErrorText) {    
+                showMessage("Hiba!", "<p class='text-danger'>Hiba a jelszó visszaállítása során!<br />" + res + "</p>");  
+              }
+              else {    
+                showMessage("Sikeres jelszó visszaállítás", "<p class='text-success'>A felhasználó új jelszava: " + res.newPassword + "</p>");
+              }
+            }
+        });    
+    }
+
+    function showUserDetails(userId) {
+      $.ajax({
+        type: "POST",
+        url: "@Url.Action("UserData", "Users")",
+        data: { userId: userId },
+        success: function (res) {
+          showMessage("Felhasználó adatai", res);         
+        },
+        error: function () {
+          showMessage("Hiba!", "<p class='text-danger'>Hiba a felhasználó betöltése során!</p>");
+        }
+      });    
+    } 
+
+    function removeUser(userId) {      
+      removeUserId = userId;
+      $('#deleteUserModal').modal('show');
+    }
+
+    function confirmRemoveUser() {
+        $.ajax({
+            type: "POST",
+            url: "@Url.Action("RemoveUser", "Users")",
+            data: { userId: removeUserId },
+            success: function (res) {
+              if(res == "SUCCESS") {      
+                showMessage("Sikeres törlés", "<p class='text-success'>Felhasználó törlése sikeresen megtörtént!</p>");
+                reloadContent();
+              }
+              else {              
+                showMessage("Hiba!", "<p class='text-danger'>Hiba a felhasználó törlése során!<br />" + res + "</p>");
+              }
+            }
+        });    
+    }
+
+    function showMessage(title, message) {
+      $("#messageModal .modal-title").html(title);
+      $("#messageModal .modal-body").html(message);      
+      $('#messageModal').modal('show');
+    }
+
+    function reloadContent() {
+      $.ajax({
+        type: "POST",
+        url: "@Url.Action("ReloadContent", "Users")",
+        success: function (res) {
+          $("#usersContent").html(res);   
+        }
+      });    
+    }
+
+  </script>
+}
+
+
+<!-- Message dialog! -->
+<div class="modal fade" id="messageModal" tabindex="-1" role="dialog" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title"></h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body"></div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Bezár</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Create/edit dialog! -->
+<div class="modal fade" id="createEditModal" tabindex="-1" role="dialog" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+    </div>
+  </div>
+</div>
+
+<!-- Confirm delete dialog! -->
+<div class="modal fade" id="deleteUserModal" tabindex="-1" role="dialog" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Felhasználó törlése</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+         Biztosan törli a kiválasztott felhasználót? Ezzel a felhasználó összes projektje is törlődik.
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Bezár</button>
+        <button type="button" onclick="confirmRemoveUser()" class="btn btn-primary" data-dismiss="modal">Törlés</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Password reset dialog! -->
+<div class="modal fade" id="pwdResetModal" tabindex="-1" role="dialog" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Jelszó visszaállítása</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+         Biztosan visszaállítja a felhasználó jelszavát? Ezzel új jelszót generál neki.
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Bezár</button>
+        <button type="button" onclick="confirmPwdReset()" class="btn btn-primary" data-dismiss="modal">Generál</button>
+      </div>
+    </div>
+  </div>
+</div>
+

@@ -1,0 +1,73 @@
+@model RegisterViewModel
+@{
+    ViewData["Title"] = "Regisztráció";
+}
+
+<div class="container mt-5">
+    <div class="card">
+        <div class="card-header">
+            <ul class="nav nav-tabs card-header-tabs" id="loginTab" role="tablist">
+                <li class="nav-item" role="presentation">
+                    <a class="nav-link" id="login-tab" href="/Account/Login" aria-selected="false">Bejelentkezés</a>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <a class="nav-link active" id="register-tab" data-toggle="tab" href="#" role="tab" aria-controls="register" aria-selected="true">Regisztráció</a>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <a class="nav-link" id="forgotpass-tab" href="/Account/PasswordReset" aria-selected="false">Elfelejtett jelszó</a>
+                </li>
+            </ul>
+        </div>
+        <div class="card-body">
+            <div class="card-body">
+                <div class="tab-content" id="loginTabContent">
+                    <div class="tab-pane fade show active p-0" id="register" role="tabpanel" aria-labelledby="register-tab">
+                        <div class="row">
+                            <div class="col-6 register-image">
+                            </div>
+                            <div class="col-6 p-5">
+                                <h1>Regisztráció</h1>
+                                <form method="post">
+                                    <div asp-validation-summary="ModelOnly" class="alert alert-danger" role="alert"></div>
+                                    <div class="form-group">                 
+                                        <label asp-for="DisplayName"></label>
+                                        <input asp-for="DisplayName" class="form-control" />
+                                        <span asp-validation-for="DisplayName" class="text-danger"></span>
+                                    </div>
+                                    <div class="form-group">
+                                        <label asp-for="UserName"></label>
+                                        <input asp-for="UserName" class="form-control" />
+                                        <span asp-validation-for="UserName" class="text-danger"></span>
+                                    </div>
+                                    <div class="form-group">                                                                
+                                        <label asp-for="Email"></label>
+                                        <input asp-for="Email" class="form-control" />
+                                        <span asp-validation-for="Email" class="text-danger"></span>
+                                    </div>
+                                    <div class="form-group">
+                                        <label asp-for="Password"></label>
+                                        <input asp-for="Password" class="form-control" />
+                                        <span asp-validation-for="Password" class="text-danger"></span>
+                                    </div>
+                                    <div class="form-group">
+                                        <label asp-for="ConfirmPassword"></label>
+                                        <input asp-for="ConfirmPassword" class="form-control" />
+                                        <span asp-validation-for="ConfirmPassword" class="text-danger"></span>
+                                    </div>                                    
+                                    <div class="form-group form-check">
+                                        <div class="custom-control custom-checkbox">
+                                            <input asp-for="AcceptPolicy" type="checkbox" class="custom-control-input">
+                                            <label class="custom-control-label" asp-for="AcceptPolicy">@Html.DisplayNameFor(m => m.AcceptPolicy)</label>
+                                        </div>
+                                        <span asp-validation-for="AcceptPolicy" class="text-danger"></span>
+                                    </div>
+                                    <button type="submit" class="btn btn-primary">Regisztráció</button>
+                                </form>                                    
+                            </div>   
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>   
+</div>

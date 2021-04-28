@@ -1,0 +1,52 @@
+@using FrontEditor.Client.Models.EditorModels
+@model ImportProjectDataViewModel
+
+<div class="modal-header">
+    <h5 class="modal-title">Projekt importálása</h5>
+    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+        <span aria-hidden="true">&times;</span>
+    </button>
+</div>
+<div class="modal-body">     
+    @Model.ErrorText
+    <form method="post" id="projectUploadImportForm">
+        <div asp-validation-summary="ModelOnly" class="alert alert-danger " role="alert"></div>
+        <input asp-for="ProjectId" type="hidden">
+        <span asp-validation-for="ProjectId" class="text-danger"></span>    
+        <div class="form-group">
+            <label asp-for="FromFile">@Html.DisplayNameFor(m => m.FromFile)</label>                       
+            <input asp-for="FromFile" class="form-control" accept=".zip" />
+            <span asp-validation-for="FromFile" class="text-danger"></span>
+        </div> 
+    </form>          
+</div>
+<div class="modal-footer">
+    <button type="button" class="btn btn-secondary" data-dismiss="modal">Mégse</button>
+    <button type="button" onclick="uploadImportFile()" class="btn btn-primary">Feltöltés</button>
+</div>
+
+<script>
+    $(document).ready(function() {
+        if("@Model.ImportSuccess" === "True") {
+            location.reload();
+        }
+    });
+    function uploadImportFile() {       
+        var files = $('#FromFile').prop("files");                
+        formData = new FormData();
+        formData.append("ProjectId", @Model.ProjectId);
+        formData.append("FromFile", files[0]);
+
+        $.ajax({
+            type: 'POST',
+            url: "@Url.Action("Import", "Editor")",
+            data: formData,
+            cache: false,
+            contentType: false,
+            processData: false,
+            success: function (res) {                
+                $('#importDataModal').modal('show').find('.modal-content').html(res);                 
+            }
+	    });
+    }
+</script>

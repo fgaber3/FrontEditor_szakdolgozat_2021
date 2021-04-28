@@ -1,0 +1,70 @@
+@using FrontEditor.Client.Models.EditorModels
+@model EditorHeaderViewModel
+
+<div asp-validation-summary="ModelOnly" class="alert alert-danger" role="alert"></div>
+<form method="post" id="projectDataForm">
+    <input asp-for="ProjectId" type="hidden" />
+    <input asp-for="ComponentId" type="hidden" />
+    <input asp-for="ComponentName" type="hidden" />
+    <div class="form-group">                                        
+        <label asp-for="Title">@Html.DisplayNameFor(m => m.Title)</label>
+        <input asp-for="Title" class="form-control" />                
+        <span asp-validation-for="Title" class="text-danger"></span>
+    </div> 
+    <div class="form-group">                                        
+        <label asp-for="LogoImage">@Html.DisplayNameFor(m => m.LogoImage)</label><br />
+        <button class="btn btn-primary">Kiválaszt..</button> //ha van megjelenít eltávolít ha nincs Kiválaszt<br/>
+        <span asp-validation-for="LogoImage" class="text-danger"></span>
+    </div> 
+    <div class="form-group">                                        
+        <label asp-for="FixedMenu"><input asp-for="FixedMenu" /> @Html.DisplayNameFor(m => m.FixedMenu)</label>                     
+        <span asp-validation-for="FixedMenu" class="text-danger"></span>
+    </div> 
+    <div class="form-group">                                        
+        <label asp-for="MobileMenu"><input asp-for="MobileMenu" /> @Html.DisplayNameFor(m => m.MobileMenu)</label>                     
+        <span asp-validation-for="MobileMenu" class="text-danger"></span>
+    </div> 
+    <div class="form-group">                                        
+        <label asp-for="ContainerMode"><input asp-for="ContainerMode" /> @Html.DisplayNameFor(m => m.ContainerMode)</label>
+        <span asp-validation-for="ContainerMode" class="text-danger"></span>
+    </div> 
+    <div class="form-group">                                        
+        <label asp-for="ShowSearchBox"><input asp-for="ShowSearchBox" /> @Html.DisplayNameFor(m => m.ShowSearchBox)</label>        
+        <span asp-validation-for="ShowSearchBox" class="text-danger"></span>
+    </div> 
+    <div class="form-group">                                        
+        <label asp-for="ColorSheme">@Html.DisplayNameFor(m => m.ColorSheme)</label> 
+        <select asp-for="ColorSheme" class="form-control" asp-items="@(new SelectList(Model.ColorShemes,"Value" ,"Key"))"></select>        
+        <span asp-validation-for="ColorSheme" class="text-danger"></span>
+    </div> 
+    <div class="form-group">                                        
+        <label asp-for="BackgroundColor">@Html.DisplayNameFor(m => m.BackgroundColor)</label>
+        <input asp-for="BackgroundColor" type="color" class="form-control" />                
+        <span asp-validation-for="BackgroundColor" class="text-danger"></span>
+    </div> 
+    <div class="form-group">          
+        <label asp-for="MenuItems">@Html.DisplayNameFor(m => m.MenuItems)</label><br />
+        <button class="btn btn-primary">Hozzáadás.</button><br />
+        <ul>
+            @foreach (MenuItem item in Model.MenuItems)
+            {
+                <li>
+                    @item.Title | @item.Href | @item.TargetBlank | ADDSUB/EDIT/DEL
+                    @if(item.MenuItems.Count > 0)
+                    {
+                        <ul>
+                            @foreach (MenuItem subItem in item.MenuItems)
+                            {
+                                <li>
+                                    @item.Title | @item.Href | @item.TargetBlank | EDIT/DEL
+                                </li>
+                            }            
+                        </ul>
+                    }
+                </li>
+            }            
+        </ul>
+    </div>
+</form>          
+<button type="submit" class="btn btn-primary">Mentés</button>
+

@@ -1,0 +1,47 @@
+@model FrontEditor.Client.Models.EditorModels.ProjectHeaderDataViewModel
+<h6 class="collapse-header">Alapadatok:</h6>
+<hr />
+@if(Model.DatasChanged)
+{
+    <div class="alert alert-success" role="alert">
+        Adatok mentése sikeres!
+    </div>        
+} 
+<div asp-validation-summary="ModelOnly" class="alert alert-danger" role="alert"></div>
+<form method="post" id="headerDataForm">
+    <input asp-for="ProjectIdForBaseDatas" type="hidden" class="form-control" />
+    <div class="form-group">                                        
+        <label asp-for="TitleForBaseDatas">@Html.DisplayNameFor(m => m.TitleForBaseDatas)</label>
+        <input asp-for="TitleForBaseDatas"  class="form-control" />
+        <span asp-validation-for="TitleForBaseDatas" class="text-danger"></span>
+    </div> 
+    <div class="form-group">                                        
+        <label asp-for="Description">@Html.DisplayNameFor(m => m.Description)</label>
+        <input asp-for="Description" class="form-control" />
+        <span asp-validation-for="Description" class="text-danger"></span>
+    </div>
+</form>
+<button type="button" class="btn btn-primary collapse-item m-2" onclick="saveBaseDatas()">Mentés</button>
+    
+@if(@Model.DatasChanged) {
+    <script>
+        $(document).ready(function () {
+            if("@Model.DatasChanged" === "True") {
+                $("#projectHeaderTitle").html("@Model.TitleForBaseDatas");
+            }
+        });
+    </script>
+}
+
+<script>
+    function saveBaseDatas() {       
+        $.ajax({
+            type: "POST",
+            url: "@Url.Action("SaveHeaderData", "Editor")",
+            data: $('#headerDataForm').serialize(),
+            success: function (res) {
+                $('#projectHeaderDataFormContainer').html(res);         
+            }
+        });
+    }
+</script>

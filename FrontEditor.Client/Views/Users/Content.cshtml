@@ -1,0 +1,41 @@
+@model List<UserViewModel>
+
+<table id="userListTable" class="table table-striped">
+    <thead>
+    <tr>
+        <th scope="col">#</th>
+        <th scope="col">Név</th>
+        <th scope="col">Felhasználónév</th>
+        <th scope="col">E-mail</th>
+        <th scope="col">Szerepkör</th>
+        <th scope="col">Projektek</th>
+        <th scope="col">Regisztráció</th>
+        <th scope="col">Utoljára aktív</th>
+        <th scope="col">Műveletek</th>                            
+    </tr>
+    </thead>
+    <tbody>
+        @{
+            int i = 0;
+            foreach (UserViewModel user in Model)
+            {
+                <tr data-user-id="@user.UserId">
+                    <td> @(++i)</td>
+                    <td>@user.DisplayName</td>
+                    <td>@user.UserName</td>
+                    <td>@user.Email</td>
+                    <td>@user.RoleName</td>
+                    <td>@user.ProjectsCount</td>
+                    <td>@user.Registration.ToString("yyyy. MM. dd. HH:mm")</td>
+                    <td>@user.LastActive.ToString("yyyy. MM. dd. HH:mm")</td>
+                <td>                                    
+                    <button class="btn btn-success btn-sm" onclick="editUser(@user.UserId)"><i class="fas fa-edit"></i></button>
+                    <button class="btn btn-info btn-sm" onclick="showUserDetails(@user.UserId)"><i class="fas fa-id-card"></i></button>
+                    <button class="btn btn-warning btn-sm" onclick="resetUserPassword(@user.UserId)"><i class="fas fa-user-lock"></i></button>
+                    <button class="btn btn-danger btn-sm" onclick="removeUser(@user.UserId)"><i class="fas fa-trash-alt"></i></button>
+                </td>
+            </tr>
+            }
+        }                                
+    </tbody>
+</table>

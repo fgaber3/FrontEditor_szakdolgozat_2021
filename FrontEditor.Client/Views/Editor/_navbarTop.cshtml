@@ -1,0 +1,18 @@
+@model FrontEditor.Client.Models.EditorModels.EditorViewModel
+
+<nav class="navbar navbar-expand bg-white topbar mb-4 static-top shadow">
+    <button id="sidebarToggleTop" class="btn btn-link d-md-none rounded-circle mr-3">
+        <i class="fa fa-bars"></i>
+    </button>
+    <div class="d-none d-sm-inline-block form-inline mr-auto ml-md-3 my-2 my-md-0 mw-100" id="projectHeaderTitle">
+        @Model.EditorData.Title
+    </div>
+    <ul class="navbar-nav ml-auto">
+        <div class="topbar-divider d-none d-sm-block"></div>
+        <li class="nav-item mx-1">
+            <a class="nav-link" href="/Editor/Preview?projectId=@(Model.ProjectData.ProjectId)" target="_blank" role="button">                
+                <i class="fas fa-sync-alt"></i> Előnézet
+            </a>
+        </li>   
+    </ul>
+</nav>

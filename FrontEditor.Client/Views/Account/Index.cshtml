@@ -1,0 +1,59 @@
+@model UserViewModel
+@{
+    ViewData["Title"] = "Profilom";
+}
+
+<div class="row">
+    <div class="col-8 m-auto">
+        <div class="card mb-3">
+            <h5 class="card-header">Profilom</h5>
+            <div class="card-body">
+                <div class="w-100 text-center mb-1">
+                    <img src="/images/base/profileimage.jpg" class="profile-image">
+                </div>
+                <ul class="list-group">
+                    <li class="list-group-item">
+                        <i class="fas fa-signature"></i> <small>Név</small> <label id="ModelDisplayName"  class="float-right">@Model.DisplayName</label>
+                    </li>
+                    <li class="list-group-item">
+                        <i class="fas fa-user"></i> <small>Felhasználó</small> <label id="ModelUserName" class="float-right">@Model.UserName</label>
+                    </li>
+                    <li class="list-group-item">
+                        <i class="fas fa-user-tag"></i> <small>Szerepkör</small> <label class="float-right">@Model.RoleName</label>
+                    </li>
+                    <li class="list-group-item">
+                        <i class="fas fa-envelope-square"></i> <small>E-mail</small> <label id="ModelEmail"  class="float-right">@Model.Email</label>
+                    </li>
+                    <li class="list-group-item">
+                        <i class="fas fa-calendar-plus"></i> <small>Regisztráció</small> <label class="float-right">@Model.Registration.ToString("yyyy. MM. dd. HH:mm")</label>
+                    </li>
+                    <li class="list-group-item">
+                        <i class="fas fa-sign-in-alt"></i> <small>Utolsó bejelentkezés</small> <label class="float-right">@Model.LastActive.ToString("yyyy. MM. dd. HH:mm")</label>
+                    </li>
+                </ul>
+            </div>
+            <div class="card-footer">
+                <button class="btn btn-primary float-left" id="openEditUserDataModal"><i class="fas fa-user-edit"></i> Profil szerkesztése</button>
+                <button class="btn btn-primary float-right" id="openPasswordChangeModal"><i class="fas fa-key"></i> Jelszó megváltoztatása</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="dataEditorModal" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content"></div>
+    </div>
+</div>
+@section Scripts {
+    <script>
+        $('#openPasswordChangeModal').on('click', function (event) {
+            $('#dataEditorModal .modal-content').html("Adatok betöltése folyamatban..");
+            $('#dataEditorModal').modal('show').find('.modal-content').load('@Url.Action("ChangePassword","Account")');
+        });
+        $('#openEditUserDataModal').on('click', function (event) {
+            $('#dataEditorModal .modal-content').html("Adatok betöltése folyamatban..");
+            $('#dataEditorModal').modal('show').find('.modal-content').load('@Url.Action("ChangeProfile","Account")');
+        });
+    </script>
+}

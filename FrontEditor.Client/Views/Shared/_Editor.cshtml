@@ -1,0 +1,25 @@
+﻿<!DOCTYPE html>
+<html lang="hu">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - Projekt FrontEditor</title>
+    <link rel="stylesheet" href="~/lib/fontawesome/css/all.min.css" />
+    <link rel="stylesheet" href="~/lib/bootstrap/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/lib/chartjs/Chart.min.css" />
+    <link rel="stylesheet" href="~/css/sb-admin-2.min.css" />
+    <link rel="stylesheet" href="~/css/site-editor.css" />    
+</head>
+<body>
+    <div id="wrapper">
+        @RenderBody()
+    </div>
+    <script src="~/lib/jquery/jquery-3.5.1.min.js"></script>   
+    <script src="~/lib/popperjs/popper.min.js"></script>
+    <script src="~/lib/bootstrap/js/bootstrap.bundle.min.js"></script>
+    <script src="~/lib/chartjs/Chart.min.js"></script>
+    <script src="~/js/sb-admin-2.min.js"></script>
+    <script src="~/js/site-editor.js" asp-append-version="true"></script>
+    @RenderSection("Scripts", required: false)
+</body>
+</html>

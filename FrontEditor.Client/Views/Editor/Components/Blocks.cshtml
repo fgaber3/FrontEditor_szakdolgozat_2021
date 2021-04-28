@@ -1,0 +1,87 @@
+@using FrontEditor.Client.Models.EditorModels
+@using FrontEditor.Client.Models.Enums
+@model EditorBlocksViewModel
+
+<div class="container-fluid" @(string.IsNullOrEmpty(Model.BackgroundColor) ? "" : "style=background-color:" + Model.BackgroundColor)>    
+    <div class='@(Model.ContainerMode ? "container" : "container-fluid")'>
+        <div class="row">
+            @{
+                string colClass = 
+                    Model.ItemsPerRow == 1 ? "col-12" : 
+                    Model.ItemsPerRow == 2 ? "col-sm-6 col-12" : 
+                    Model.ItemsPerRow == 3 ? "col-md-4 col-12" : 
+                                            "col-lg-3 col-sm-6 col-12";             
+            }
+            @foreach (BlockItem item in Model.BlockItems)
+            {
+                <div class='@colClass my-2'>
+                    @if(!string.IsNullOrEmpty(item.ImageHref))
+                    {
+                        <img src='@(item.ImageHref.StartsWith("http") ? item.ImageHref : (ViewBag.IsClientPreview == null) ? "images/" + item.ImageHref : "/images/projects/"+Model.ProjectId + "/" + item.ImageHref)' class="d-block w-100" />
+                    }
+
+                    @if(!string.IsNullOrEmpty(item.IconName))
+                    {
+                        <div class="w-100 text-center" style="font-size: 6rem;"><i class="fas fa-@(item.IconName)"></i></div>
+                    }
+                    <h3 class='@(item.TitleAlign == AlignEnum.Left ? "text-left" : item.TitleAlign == AlignEnum.Center ? "text-center" : "text-right")' @(string.IsNullOrEmpty(item.TitleColor) ? "" : "style=color:" + item.TitleColor) >@item.Title</h3>            
+                    <div>
+                        @Html.Raw(item.Content)
+                    </div>
+                    @if(item.ChartRows.Count != 0 && item.ChartType != ChartType.None) 
+                    {
+                        <div>
+                            <canvas id="myChart@(item.BlockItemId)" width="400" height="400"></canvas>
+                        </div>
+                    }
+                </div>
+            }
+        </div>
+    </div>    
+</div>
+
+@{
+    string functions = "";
+    foreach (BlockItem item in Model.BlockItems.Where(x => x.ChartType != ChartType.None && x.ChartRows.Count != 0))
+    {    
+        functions += "render" + item.BlockItemId + "(); ";
+        string labels = "";
+        string datas = "";
+        string backgrounds= "";
+        string chartType =  item.ChartType == ChartType.Bar ? "bar":
+                            item.ChartType == ChartType.Doughnut ? "doughnut" : "pie";
+        foreach(ChartRow row in item.ChartRows)
+        {
+            labels += "\"" + row.Label + "\", ";
+            datas += "'" + row.Data + "', ";
+            backgrounds += "'" + row.Color + "', ";
+        }
+        <script>
+            function render@(item.BlockItemId)() {
+                var ctx@(item.BlockItemId) = document.getElementById('myChart@(item.BlockItemId)').getContext('2d');
+                var myChart@(item.BlockItemId) = new Chart(ctx@(item.BlockItemId), {
+                    type: '@Html.Raw(chartType)',
+                    data: {
+                        labels: [@Html.Raw(labels)],
+                        datasets: [{
+                            label: '',
+                            data: [@Html.Raw(datas)],
+                            backgroundColor: [@Html.Raw(backgrounds)]
+                        }]
+                    },
+                    options: { legend: { display: false } }
+                });
+            }
+        </script>
+    }
+    <script>
+        window.onload=(function(oldLoad){
+            return function(){
+                oldLoad && oldLoad();
+                @(functions)
+            }
+            })(window.onload);
+    </script>
+}
+
+        

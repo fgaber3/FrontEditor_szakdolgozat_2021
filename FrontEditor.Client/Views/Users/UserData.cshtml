@@ -1,0 +1,22 @@
+@model UserViewModel
+
+<ul class="list-group">
+    <li class="list-group-item">
+        <i class="fas fa-signature"></i> <small>Név</small> <label id="ModelDisplayName"  class="float-right">@Model.DisplayName</label>
+    </li>
+    <li class="list-group-item">
+        <i class="fas fa-user"></i> <small>Felhasználó</small> <label id="ModelUserName" class="float-right">@Model.UserName</label>
+    </li>
+    <li class="list-group-item">
+        <i class="fas fa-user-tag"></i> <small>Szerepkör</small> <label class="float-right">@Model.RoleName</label>
+    </li>
+    <li class="list-group-item">
+        <i class="fas fa-envelope-square"></i> <small>E-mail</small> <label id="ModelEmail"  class="float-right">@Model.Email</label>
+    </li>
+    <li class="list-group-item">
+        <i class="fas fa-calendar-plus"></i> <small>Regisztráció</small> <label class="float-right">@Model.Registration.ToString("yyyy. MM. dd. HH:mm")</label>
+    </li>
+    <li class="list-group-item">
+        <i class="fas fa-sign-in-alt"></i> <small>Utolsó bejelentkezés</small> <label class="float-right">@Model.LastActive.ToString("yyyy. MM. dd. HH:mm")</label>
+    </li>
+</ul>

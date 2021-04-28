@@ -1,0 +1,72 @@
+﻿<!DOCTYPE html>
+<html lang="hu">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - FrontEditor</title>
+    <link rel="stylesheet" href="~/lib/fontawesome/css/all.min.css" />
+    <link rel="stylesheet" href="~/lib/bootstrap/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/lib/chartjs/Chart.min.css" />
+    <link rel="stylesheet" href="~/css/site.css" />
+</head>
+<body>
+    <header>
+        <nav class="navbar fixed-top navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
+            <div class="container">
+                <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">
+                    <i class="fas fa-palette"></i>
+                     FrontEditor
+                </a>
+                <button class="navbar-toggler" type="button" data-toggle="collapse" data-target=".navbar-collapse" aria-controls="navbarSupportedContent"
+                        aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                @if (User.Identity.IsAuthenticated) 
+                {
+                    <div class="navbar-collapse collapse d-sm-inline-flex flex-sm-row-reverse float-left">                    
+                        <ul class="navbar-nav flex-grow-1">
+                            <li class="nav-item">
+                                <a class='nav-link @(ViewData["Title"] == "Vezérlőpult" ? "text-dark" : "")' asp-controller="Home" asp-action="Index"><i class="fas fa-tachometer-alt"></i> Vezérlőpult</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class='nav-link @(ViewData["Title"] == "Projektek" ? "text-dark" : "")' asp-controller="Projects" asp-action="Index"><i class="fas fa-layer-group"></i> Projektek</a>
+                            </li>
+                            @if(User.IsInRole("Admin"))
+                            {
+                                <li class="nav-item">
+                                    <a class='nav-link @(ViewData["Title"] == "Felhasználók" ? "text-dark" : "")' asp-controller="Users" asp-action="Index"><i class="fas fa-users"></i> Felhasználók</a>
+                                </li>
+                            }
+                        </ul>
+                    </div>               
+                    <span class="navbar-text"><div class="dropdown">
+                        <a class="nav-link" href="#" role="button" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            <i class="fas fa-user"></i> @User.Identity.Name <i class="fas fa-angle-down"></i>
+                        </a>
+                        <div class="dropdown-menu" aria-labelledby="dropdownMenuLink">
+                            <a class="dropdown-item" asp-controller="Account" asp-action="Index"><i class="fas fa-user-cog"></i> Beállítások</a>
+                            <a class="dropdown-item" asp-controller="Account" asp-action="Logout"><i class="fas fa-sign-out-alt"></i> Kijelentkezés</a>                    
+                        </div>
+                    </span>       
+                }                 
+            </div>
+        </nav>
+    </header> 
+    <div class='@(ViewData["Container"] == "fluid" ? "container-fluid " : "container ") container-main'>
+        <main role="main" class="pb-3">
+            @RenderBody()
+        </main>
+    </div>
+
+    <footer class="border-top footer text-muted">
+        <div class="container">
+            &copy; 2021 - FrontEditor  <span class="float-right"><a asp-area="" asp-controller="Home" asp-action="Documentation"><i class="fas fa-file-code"></i> Dokumentáció</a></span>
+        </div>
+    </footer>    
+    <script src="~/lib/popperjs/popper.min.js"></script>
+    <script src="~/lib/jquery/jquery-3.5.1.min.js"></script>   
+    <script src="~/lib/bootstrap/js/bootstrap.bundle.min.js"></script>
+    <script src="~/lib/chartjs/Chart.min.js"></script>
+    @RenderSection("Scripts", required: false)
+</body>
+</html>

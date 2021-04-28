@@ -1,0 +1,25 @@
+@using FrontEditor.Client.Models.EditorModels
+@model EditorFooterViewModel
+
+<footer class="border-top footer text-muted p-5 mt-1" style="background-color: @(Model.BackgroundColor);">
+    <div class='@(Model.ContainerMode ? "container " : "container-fluid ") @(Model.CopyTextAlign == AlignEnum.Right ? "text-right " : Model.CopyTextAlign == AlignEnum.Center ? "text-center " : "text-left ")' style="color: @(Model.TextColor);">
+        &copy; @(DateTime.Now.Year) - @Model.CopyTextExtended | created with FrontEditor | </span>
+        <div class='@(Model.MenuItemsAlign == AlignEnum.Right ? "float-right " : Model.MenuItemsAlign == AlignEnum.Left ? "float-left " : " ") mx-2'>
+            @foreach(MenuItem menu in Model.MenuItems)
+            {
+            <a href='@(string.IsNullOrEmpty(menu.Href) ? "" : menu.Href)' target='@(menu.TargetBlank ? "_blank" : "_self")' class='@(Model.ColorSheme == ColorShemeEnum.Dark ? "text-light" : "text-dark")'>
+                @if(!string.IsNullOrEmpty(menu.Icon))
+                {
+                    <i class="fas fa-@menu.Icon"></i> 
+                }
+                @menu.Title
+            </a> 
+            }
+        </div>
+    </div>
+</footer>
+<style>
+    .footer a {
+        opacity: 0.7;
+    }
+</style>

@@ -1,0 +1,193 @@
+@model ProjectListViewModel
+@{
+    ViewBag.Title = "Projektek";
+}
+<div class="row m-1">
+  <button class="btn btn-primary float-left mr-1" onclick="createNewProject()"><i class="fas fa-plus"></i> Létrehozás</button>
+  @if(Model.AdminMode)
+  {
+    <button class="btn @(Model.ShowAllProject ? "btn-info" : "btn-secondary") float-left mr-1" @(Model.ShowAllProject ? "disabled" : "") onclick="window.location.href = '/Projects?ShowAllProject=true'"><i class="fas fa-eye"></i> Összes projekt</button>
+    <button class="btn @(Model.ShowAllProject ? "btn-secondary" : "btn-info") float-left mr-1" @(Model.ShowAllProject ? "" : "disabled") onclick="window.location.href = '/Projects?ShowAllProject'"><i class="fas fa-eye-slash"></i> Csak saját projektek</button>
+  }
+</div>
+<div class="row row-cols-1 row-cols-md-3" id="projectsContent">
+  @Html.Partial("Content", (List<ProjectViewModel>)Model.ProjectList)      
+</div>
+
+@section Scripts {
+  <script>
+    var deleteProjectId = 0;
+    var exportProjectId = 0;
+    $(document).ready(function() {
+      if("@(!string.IsNullOrEmpty(Model.RedirectTo))" ==="True") {
+        showMessage("Exportálás sikeres", "<p>Kérjük <a href='@Model.RedirectTo' target='_blank'>kattintson ide</a> az exportált fájlok letöltéséhez!</p>")
+      }
+    });
+    
+    function createNewProject() {
+       $.ajax({
+        type: "POST",
+        url: "@Url.Action("Create", "Projects")",
+        success: function (res) {          
+          console.log(res);
+          $("#createEditModal .modal-content").html(res);      
+          $('#createEditModal').modal('show');        
+        }
+      });    
+    }
+
+    function editProject(projectId) {
+       $.ajax({
+        type: "POST",
+        url: "@Url.Action("Edit", "Projects")",
+        data: { projectId: projectId },
+        success: function (res) {      
+          $("#createEditModal .modal-content").html(res);      
+          $('#createEditModal').modal('show');      
+        }
+      });    
+    }
+    
+    function openProject(projectId) {
+       window.open("/Editor?projectId="+projectId, '_blank').focus();
+    }
+
+    function changeImage(projectId) {
+       $.ajax({
+        type: "POST",
+        url: "@Url.Action("ChangeProjectImage", "Projects")",
+        data: { projectId: projectId },
+        success: function (res) {      
+          $("#imageUploadModal .modal-content").html(res);      
+          $('#imageUploadModal').modal('show');      
+        }
+      });    
+    }
+
+    function exportProject(projectId) {
+      exportProjectId = projectId;      
+      $('#exportProjectModal').modal('show');      
+    }
+    function generateProject(type) {
+      window.open("/Editor/Export?projectId=" + exportProjectId + "&jsonExport=" + (type==="JSON"), "_self").focus();
+    }
+
+    function deleteProject(projectId) {
+      deleteProjectId = projectId;
+      $('#deleteProjectModal').modal('show');
+    }
+
+    function confirmDeleteProject() {
+        $.ajax({
+            type: "POST",
+            url: "@Url.Action("DeleteProject", "Projects")",
+            data: { projectId: deleteProjectId },
+            success: function (res) {
+              if(res == "SUCCESS") {      
+                showMessage("Sikeres törlés", "<p class='text-success'>Projekt törlése sikeresen megtörtént!</p>");
+                reloadContent();
+              }
+              else {              
+                showMessage("Hiba!", "<p class='text-danger'>Hiba a projekt törlése során!<br />" + res + "</p>");
+              }
+            }
+        });    
+    }
+
+    function reloadContent() {
+      $.ajax({
+        type: "POST",
+        url: "@Url.Action("ReloadContent", "Projects")",
+        data: { ShowAllProject: "@Model.ShowAllProject" == "True"},
+        success: function (res) {
+          $("#projectsContent").html(res);   
+        }
+      });    
+    }
+
+    function showMessage(title, message) {
+      $("#messageModal .modal-title").html(title);
+      $("#messageModal .modal-body").html(message);      
+      $('#messageModal').modal('show');
+    }
+  </script>
+}
+
+
+
+<!-- Image edit dialog! -->
+<div class="modal fade" id="imageUploadModal" tabindex="-1" role="dialog" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+    </div>
+  </div>
+</div>
+
+<!-- Message dialog! -->
+<div class="modal fade" id="messageModal" tabindex="-1" role="dialog" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title"></h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body"></div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Bezár</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Create/edit dialog! -->
+<div class="modal fade" id="createEditModal" tabindex="-1" role="dialog" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+    </div>
+  </div>
+</div>
+
+<!-- Confirm delete dialog! -->
+<div class="modal fade" id="deleteProjectModal" tabindex="-1" role="dialog" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Projekt törlése</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+         Biztosan törli a kiválasztott projektet? Ezzel a projekthez tartozó összes adat is végleg törlődik.
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Bezár</button>
+        <button type="button" onclick="confirmDeleteProject()" class="btn btn-primary" data-dismiss="modal">Törlés</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Confirm export dialog! -->
+<div class="modal fade" id="exportProjectModal" tabindex="-1" role="dialog" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Projekt exportálása</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+         Biztosan exportálja a kiválasztott projektet? Ezzel kigenerálja a letöltési fájlokat és a projekt státusza exportáltra változik.
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Bezár</button>
+        <button type="button" onclick="generateProject('JSON')" class="btn btn-primary" data-dismiss="modal">JSON generálás</button>
+        <button type="button" onclick="generateProject('HTML')" class="btn btn-primary" data-dismiss="modal">HTML generálás</button>
+      </div>
+    </div>
+  </div>
+</div>

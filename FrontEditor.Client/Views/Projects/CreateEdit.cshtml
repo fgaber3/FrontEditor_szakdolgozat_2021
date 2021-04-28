@@ -1,0 +1,72 @@
+@model ProjectViewModel
+<div class="modal-header">
+    <h5 class="modal-title">@(Model.ProjectId > 0 ? "Projekt szerkesztése" : "Projekt létrehozása ")</h5>
+    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+        <span aria-hidden="true">&times;</span>
+    </button>
+</div>
+<div class="modal-body">
+    @if(Model.DatasChanged)
+    {
+        <div class="alert alert-success" role="alert">
+            Adatok mentése sikeres! 
+            @if(Model.NewProject) 
+            {
+                <br /><a href="#">Projekt szerkesztése</a> 
+            }
+        </div>        
+    } 
+    else
+    {
+        <div asp-validation-summary="ModelOnly" class="alert alert-danger" role="alert"></div>
+        <form method="post" id="projectDataForm">
+            <input asp-for="ProjectId" type="hidden" />
+            <div class="form-group">                                        
+                <label asp-for="Title">@Html.DisplayNameFor(m => m.Title)</label>
+                <input asp-for="Title" class="form-control" />                
+                <span asp-validation-for="Title" class="text-danger"></span>
+            </div> 
+            <div class="form-group">                                        
+                <label asp-for="Description">@Html.DisplayNameFor(m => m.Description)</label>
+                <textarea rows="4" asp-for="Description" class="form-control"></textarea>
+                <span asp-validation-for="Description" class="text-danger"></span>
+            </div> 
+            <div class="form-group">                                        
+                <label asp-for="Category">@Html.DisplayNameFor(m => m.Category)</label>
+                <input asp-for="Category" class="form-control" />
+                <span asp-validation-for="Category" class="text-danger"></span>
+            </div>
+        </form>          
+    }
+</div>
+
+<div class="modal-footer"> 
+    @if(Model.DatasChanged)
+    {
+        <button type="button" class="btn btn-primary" data-dismiss="modal">Rendben</button>
+    }
+    else 
+    {
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Mégse</button>
+        <button type="button" onclick="saveData()" class="btn btn-primary">Mentés</button>
+    }
+</div>
+
+<script>
+     $(document).ready(function() {
+        if("@Model.DatasChanged" == "True") {
+            reloadContent();    
+        } 
+    });
+    function saveData() {       
+        $.ajax({
+            type: "POST",
+            url: "@Url.Action("Save", "Projects")",
+            data: $('#projectDataForm').serialize(),
+            success: function (res) {
+                reloadContent();
+                $('#createEditModal').modal('show').find('.modal-content').html(res);         
+            }
+        });
+    }
+</script>

@@ -1,0 +1,48 @@
+@using FrontEditor.Client.Models.EditorModels
+@model UploadProjectImageViewModel
+
+<div class="modal-header">
+    <h5 class="modal-title">Kép feltöltése</h5>
+    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+        <span aria-hidden="true">&times;</span>
+    </button>
+</div>
+<div class="modal-body">     
+    @Model.ErrorText
+    <form method="post" id="projectUploadImportForm">
+        <div asp-validation-summary="ModelOnly" class="alert alert-danger " role="alert"></div>
+        <input asp-for="ProjectId" type="hidden">
+        <span asp-validation-for="ProjectId" class="text-danger"></span>    
+        <div class="form-group">
+            <label asp-for="Image">@Html.DisplayNameFor(m => m.Image)</label>                       
+            <input asp-for="Image" class="form-control" accept="image/*" />
+            <span asp-validation-for="Image" class="text-danger"></span>
+        </div> 
+    </form>          
+</div>
+<div class="modal-footer">
+    <button type="button" class="btn btn-secondary" data-dismiss="modal">Mégse</button>
+    <button type="button" onclick="uploadImageFile()" class="btn btn-primary">Feltöltés</button>
+</div>
+
+<script>
+    function uploadImageFile() {       
+        var files = $('#Image').prop("files");                
+        formData = new FormData();
+        formData.append("ProjectId", @Model.ProjectId);
+        formData.append("Image", files[0]);
+
+        $.ajax({
+            type: 'POST',
+            url: "@Url.Action("UpladProjectImage", "Editor")",
+            data: formData,
+            cache: false,
+            contentType: false,
+            processData: false,
+            success: function (res) {                
+                addImageItem(files[0].name);
+                $('#imageUploadModal').modal('hide').find('.modal-content').html(res);                 
+            }
+	    });
+    }
+</script>

@@ -1,0 +1,36 @@
+@using FrontEditor.Client.Models.Enums
+@model List<ProjectViewModel>
+@foreach (ProjectViewModel proj in Model)
+{
+  <div class="col mb-4 d-flex align-items-stretch">
+    <div class="card project-card">
+      <img src="/Projects/GetProjectImage?projectId=@(proj.ProjectId)&requestTime=@(DateTime.Now)" class="card-img-top">       
+      <div class="card-body">
+        <h5 class="card-title">@proj.Title</h5>
+        <div class="card-text">@proj.Description</div>    
+        <hr />
+        <ul class="list-group">
+          <li class="list-group-item">
+            <i class="fas fa-user"></i> <label class="float-right">@proj.OwnerDisplayName</label>
+          </li>
+          <li class="list-group-item">
+            <i class="fas fa-stream"></i> <label class="float-right">@proj.Status.ToDisplayString()</label>
+          </li>
+          <li class="list-group-item">
+            <i class="fas fa-tags"></i> <label class="float-right">@proj.Category</label>
+          </li>
+          <li class="list-group-item">
+            <i class="fas fa-calendar-plus"></i> <label class="float-right">@proj.CreateTime.ToString("yyyy. MM. dd.")</label>
+          </li>
+        </ul>   
+      </div>        
+      <div class="card-footer text-center project-card-footer">
+          <button type="button" class="btn btn-primary mr-1" onclick="openProject(@proj.ProjectId)"><i class="fas fa-edit"></i> <span>Szerkesztés</span></button>
+          <button type="button" class="btn btn-primary mr-1" onclick="editProject(@proj.ProjectId)"><i class="fas fa-sliders-h"></i> <span>Beállítások</span></button>
+          <button type="button" class="btn btn-primary mr-1" onclick="changeImage(@proj.ProjectId)"><i class="fas fa-image"></i> <span>Képcsere</span></button>
+          <button type="button" class="btn btn-success mr-1" @(proj.Status == ProjectStatus.New ? "disabled" : "") onclick="exportProject(@proj.ProjectId)"><i class="fas fa-download"></i> <span>Exportálás</span></button>
+          <button type="button" class="btn btn-danger" onclick="deleteProject(@proj.ProjectId)"><i class="fas fa-trash-alt"></i> <span>Törlés</span></button>
+      </div>
+    </div>
+  </div>
+}
