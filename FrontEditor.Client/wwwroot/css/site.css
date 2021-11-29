@@ -1,13 +1,9 @@
-﻿/* Please see documentation at https://docs.microsoft.com/aspnet/core/client-side/bundling-and-minification
-for details on configuring this project to bundle and minify static web assets. */
-
-a.navbar-brand {
+﻿a.navbar-brand {
   white-space: normal;
   text-align: center;
   word-break: break-all;
 }
 
-/* Provide sufficient contrast against white background */
 a {
   color: #0366d6;
 }
@@ -18,14 +14,13 @@ a {
   border-color: #1861ac;
 }
 
-.nav-pills .nav-link.active, .nav-pills .show > .nav-link {
+.nav-pills .nav-link.active,
+.nav-pills .show > .nav-link {
   color: #fff;
   background-color: #1b6ec2;
   border-color: #1861ac;
 }
 
-/* Sticky footer styles
--------------------------------------------------- */
 html {
   font-size: 14px;
 }
@@ -43,7 +38,7 @@ html {
 }
 
 .box-shadow {
-  box-shadow: 0 .25rem .75rem rgba(0, 0, 0, .05);
+  box-shadow: 0 0.25rem 0.75rem rgba(0, 0, 0, 0.05);
 }
 
 button.accept-policy {
@@ -51,8 +46,6 @@ button.accept-policy {
   line-height: inherit;
 }
 
-/* Sticky footer styles
--------------------------------------------------- */
 html {
   position: relative;
   min-height: 100%;
@@ -68,25 +61,24 @@ body {
   white-space: nowrap;
   line-height: 60px;
 }
-.container-main {  
+.container-main {
   margin-top: 5rem;
 }
-
 
 .login-image {
   background: url(/images/base/login.jpg);
   background-position: center;
   background-size: cover;
   border: 10px double white;
-}   
+}
 
 .register-image {
   background: url(/images/base/register.jpg);
   background-position: center;
   background-size: cover;
   border: 10px double white;
-}   
-        
+}
+
 .forgotpass-image {
   background: url(/images/base/forgotpass.jpg);
   background-position: center;
@@ -110,7 +102,7 @@ body {
   display: none;
 }
 
-.project-card-footer .btn:hover span { 
+.project-card-footer .btn:hover span {
   display: inline;
 }
 
@@ -124,4 +116,23 @@ body {
 
 .project-card .card-img-top {
   height: 230px;
+}
+
+.loader-container {
+  width: 100vw;
+  height: 100vh;
+  margin: auto;
+  text-align: center;
+  font-size: 7rem;
+  position: absolute;
+  z-index: 100;
+  background-color: #ffffff6b;
+}
+
+.loader-container i {
+  font-size: 9rem;
+}
+
+.loader-container .loader {
+  margin-top: 20vw;
 }

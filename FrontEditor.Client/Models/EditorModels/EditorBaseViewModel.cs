@@ -7,11 +7,10 @@ namespace FrontEditor.Client.Models.EditorModels
     public class EditorBaseViewModel
     {   
         public string ViewName { get; private set; }     
-        public int ProjectId { get; private set; }   
+        public int ProjectId { get; set; }   
         public string ComponentName { get; set; }
         public string ComponentId { get; set; }
 
-    
         public List<KeyValuePair<string, ColorShemeEnum>> ColorShemes 
         { 
             get 
@@ -28,6 +27,5 @@ namespace FrontEditor.Client.Models.EditorModels
             ViewName = viewName;
             ProjectId = projectId;
         }
-        
     }
 }

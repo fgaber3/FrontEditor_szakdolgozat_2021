@@ -1,3 +1,49 @@
-.cursor-pointer, .sidebar-brand {
-    cursor: pointer;
+.cursor-pointer,
+.sidebar-brand {
+  cursor: pointer;
+}
+
+.editor-list-actions .btn span {
+  display: none;
+}
+
+.editor-list-actions .btn:hover span {
+  display: inline;
+}
+
+#editorPanelContainer {
+  overflow-y: scroll;
+  height: calc(100vh - 80px);
+}
+.loader-container {
+  width: 100vw;
+  height: 100vh;
+  margin: auto;
+  text-align: center;
+  font-size: 7rem;
+  position: absolute;
+  z-index: 100;
+  background-color: #ffffff6b;
+}
+.loader-container i {
+  font-size: 9rem;
+}
+.loader-container .loader {
+  margin-top: 20vw;
+}
+.modal-body {
+  max-height: calc(100vh - 200px);
+  min-height: 200px;
+  overflow-y: scroll;
+}
+.autocomplete {
+  position: relative;
+  display: inline-block;
+}
+.autocomplete-items {
+  position: absolute;
+  z-index: 99;
+  top: 100%;
+  left: 0;
+  right: 0;
 }

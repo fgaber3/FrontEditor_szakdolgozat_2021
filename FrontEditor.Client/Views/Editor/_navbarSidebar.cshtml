@@ -7,7 +7,7 @@
             <i class="fas fa-palette"></i>
         </div>
         <div class="sidebar-brand-text mx-3">FrontEditor</div>
-    </a>                                       
+    </a>
     <div class="sidebar-heading">
         Téma
     </div>
@@ -18,22 +18,26 @@
             <span>Téma alapbeállítások</span>
         </a>
         <div id="collapseSettings" class="collapse" data-parent="#accordionSidebar">
-            <div class="bg-white px-1 py-2 collapse-inner rounded" id="projectHeaderDataFormContainer">      
-                @Html.Partial("_baseDatasForm", new ProjectHeaderDataViewModel() { TitleForBaseDatas = Model.EditorData.Title, Description = Model.EditorData.Description, ProjectIdForBaseDatas = Model.ProjectData.ProjectId })        
+            <div class="bg-white px-1 py-2 collapse-inner rounded" id="projectHeaderDataFormContainer">
+                @Html.Partial("_baseDatasForm", new ProjectHeaderDataViewModel() { TitleForBaseDatas =
+                Model.EditorData.Title, Description = Model.EditorData.Description, ProjectIdForBaseDatas =
+                Model.ProjectData.ProjectId })
             </div>
         </div>
-    </li><li class="nav-item">
+    </li>
+    <li class="nav-item">
         <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseCustomStyle"
             aria-expanded="false" aria-controls="collapseCustomStyle">
             <i class="fab fa-css3-alt"></i>
             <span>@Html.DisplayNameFor(m => m.EditorData.CustomCss)</span>
         </a>
         <div id="collapseCustomStyle" class="collapse" aria-labelledby="headingUtilities">
-            <div class="bg-white py-2 collapse-inner rounded">      
+            <div class="bg-white py-2 collapse-inner rounded">
                 <h6 class="collapse-header">CSS:</h6>
                 <hr />
                 <textarea rows="6" asp-for="EditorData.CustomCss" class="collapse-item"></textarea>
-                <button type="button" class="btn btn-primary collapse-item m-2" onclick="saveCustomCSS()">Mentés</button>
+                <button type="button" class="btn btn-primary collapse-item m-2"
+                    onclick="saveCustomCSS()">Mentés</button>
             </div>
         </div>
     </li>
@@ -48,7 +52,7 @@
                 @Html.Partial("_projectFilesPanel", Model)
             </div>
         </div>
-    </li>   
+    </li>
     <hr class="sidebar-divider">
     <div class="sidebar-heading">
         Projekt
@@ -62,16 +66,16 @@
     <li class="nav-item">
         <a class="nav-link cursor-pointer" onclick="importProject()">
             <i class="fas fa-fw fa-upload"></i>
-            <span>Importálás</span> 
+            <span>Importálás</span>
         </a>
-    </li> 
+    </li>
     <li class="nav-item">
         <a class="nav-link cursor-pointer" onclick="exportProject()">
             <i class="fas fa-fw fa-download"></i>
             <span class="badge badge-secondary float-right">@Model.ProjectData.ExportCount</span>
-            <span>Exportálás</span> 
+            <span>Exportálás</span>
         </a>
-    </li>       
+    </li>
     <hr class="sidebar-divider d-none d-md-block">
     <div class="text-center d-none d-md-inline">
         <button class="rounded-circle border-0" id="sidebarToggle"></button>
@@ -85,10 +89,10 @@
             type: "POST",
             url: "@Url.Action("SaveCustomCss", "Editor")",
             data: { projectId: @Model.ProjectData.ProjectId, customCss: customCss },
-            success: function (res) {     
-                if(res == 'SUCCESS')  
-                    showMessage("Sikeres mentés", "<p class='text-success'>Egyedi stílus mentése sikeres!</p>");                    
-                else 
+            success: function (res) {
+                if (res == 'SUCCESS')
+                    showMessage("Sikeres mentés", "<p class='text-success'>Egyedi stílus mentése sikeres!</p>");
+                else
                     showMessage("Sikertelen mentés", "<p class='text-danger'>Hiba az egyedi stílus mentése során!</p>");
             },
             error: function (err) {
@@ -102,68 +106,70 @@
             type: "POST",
             url: "@Url.Action("Edit", "Projects")",
             data: { projectId: projectId },
-            success: function (res) {      
-                $("#createEditModal .modal-content").html(res);      
-                $('#createEditModal').modal('show');      
+            success: function (res) {
+                $("#createEditModal .modal-content").html(res);
+                $('#createEditModal').modal('show');
             }
-        });    
+        });
     }
-    function reloadContent() { }
-    
+
     function importProject() {
         $.ajax({
             type: "POST",
             url: "@Url.Action("ImportProject", "Editor")",
             data: { projectId: @(Model.ProjectData.ProjectId) },
-            success: function (res) {      
-                $("#importDataModal .modal-content").html(res);      
-                $('#importDataModal').modal('show');      
+            success: function (res) {
+                $("#importDataModal .modal-content").html(res);
+                $('#importDataModal').modal('show');
             }
-        });    
+        });
     }
 
-    function exportProject() {    
-      $('#exportProjectModal').modal('show');      
+    function exportProject() {
+        $('#exportProjectModal').modal('show');
     }
     function generateProject(type) {
-      window.open("/Editor/Export?projectId=@(Model.ProjectData.ProjectId)&jsonExport=" + (type==="JSON"), "_self").focus();
+        window.open("/Editor/Export?projectId=@(Model.ProjectData.ProjectId)&jsonExport=" + (type === "JSON"), "_self").focus();
     }
 </script>
 
 <!-- Confirm export dialog! -->
 <div class="modal fade" id="exportProjectModal" tabindex="-1" role="dialog" aria-hidden="true">
-  <div class="modal-dialog" role="document">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title">Projekt exportálása</h5>
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-          <span aria-hidden="true">&times;</span>
-        </button>
-      </div>
-      <div class="modal-body">
-         Biztosan exportálja a kiválasztott projektet? Ezzel kigenerálja a letöltési fájlokat és a projekt státusza exportáltra változik.
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-dismiss="modal">Bezár</button>
-        <button type="button" onclick="generateProject('JSON')" class="btn btn-primary" data-dismiss="modal">JSON generálás</button>
-        <button type="button" onclick="generateProject('HTML')" class="btn btn-primary" data-dismiss="modal">HTML generálás</button>
-      </div>
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Projekt exportálása</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                Biztosan exportálja a kiválasztott projektet? Ezzel kigenerálja a letöltési fájlokat és a projekt
+                státusza exportáltra változik.
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Bezár</button>
+                <button type="button" onclick="generateProject('JSON')" class="btn btn-primary"
+                    data-dismiss="modal">JSON generálás</button>
+                <button type="button" onclick="generateProject('HTML')" class="btn btn-primary"
+                    data-dismiss="modal">HTML generálás</button>
+            </div>
+        </div>
     </div>
-  </div>
 </div>
 
 <!-- Import data dialog! -->
 <div class="modal fade" id="importDataModal" tabindex="-1" role="dialog" aria-hidden="true">
-  <div class="modal-dialog" role="document">
-    <div class="modal-content">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+        </div>
     </div>
-  </div>
 </div>
 
 <!-- Create/edit dialog! -->
 <div class="modal fade" id="createEditModal" tabindex="-1" role="dialog" aria-hidden="true">
-  <div class="modal-dialog" role="document">
-    <div class="modal-content">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+        </div>
     </div>
-  </div>
 </div>

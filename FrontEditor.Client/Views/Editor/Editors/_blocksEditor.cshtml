@@ -1,2 +1,267 @@
 @using FrontEditor.Client.Models.EditorModels
-@model EditorBlocksViewModel
+@using FrontEditor.Client.Models.Enums
+@model EditBlocksComponentViewModel
+
+<div class="modal-header">
+    <h5 class="modal-title">@(Model.ComponentIndex < 0 ? "Komponens létrehozása" : Model.ComponentName + " - Szerkesztés")</h5>
+    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+        <span aria-hidden="true">&times;</span>
+    </button>
+</div>
+<div class="modal-body">
+    @if(Model.IsSuccess)
+    {
+        <div class="alert alert-success" role="alert">
+            A komponens mentése sikeresen megtörtént!
+        </div>        
+    }  
+    else 
+    {             
+        <div asp-validation-summary="ModelOnly" class="alert alert-danger" role="alert">
+            @Model.ErrorText
+        </div>
+        <div class="accordion" id="editorAccordion">
+            <form method="post" id="projectDataForm">
+                <input asp-for="ProjectId" type="hidden" />
+                <input asp-for="ComponentIndex" type="hidden" />
+            <div class="card">
+                <div class="card-header" id="headingBase">
+                    <h2 class="mb-0">
+                        <button class="btn btn-link btn-block text-left" type="button" data-toggle="collapse" data-target="#collapseBase" aria-expanded="true" aria-controls="collapseBase">
+                        Alapadatok
+                        </button>
+                    </h2>
+                </div>
+                <div id="collapseBase" class="collapse show" aria-labelledby="headingBase" data-parent="#editorAccordion">
+                    <div class="card-body">
+                        <div class="form-group">                                        
+                            <label asp-for="ComponentName">@Html.DisplayNameFor(m => m.ComponentName)</label>
+                            @if(Model.ComponentIndex >= 0) {
+                                <input asp-for="ComponentName" type="hidden" class="form-control" />      
+                                <input type="text" class="form-control" value="@Model.ComponentName" disabled/> 
+                            } else {
+                                <input asp-for="ComponentName" class="form-control" />  
+                            }       
+                            <span asp-validation-for="ComponentName" class="text-danger"></span>
+                        </div>              
+                        <div class="form-group">                                        
+                            <label asp-for="ComponentId">@Html.DisplayNameFor(m => m.ComponentId)</label>
+                            @if(Model.ComponentIndex >= 0) {
+                                <input asp-for="ComponentId" type="hidden" class="form-control" />      
+                                <input type="text" class="form-control" value="@Model.ComponentId" disabled/> 
+                            } else {
+                                <input asp-for="ComponentId" class="form-control" />  
+                            }  
+                            <span asp-validation-for="ComponentId" class="text-danger"></span>
+                        </div>                 
+                    </div>
+                </div>
+            </div>
+            <div class="card">
+                <div class="card-header" id="headingMenuSettings">
+                <h2 class="mb-0">
+                    <button class="btn btn-link btn-block text-left collapsed" type="button" data-toggle="collapse" data-target="#collapseMenuSettings" aria-expanded="false" aria-controls="collapseMenuSettings">
+                    Beállítások
+                    </button>
+                </h2>
+                </div>
+                <div id="collapseMenuSettings" class="collapse" aria-labelledby="headingMenuSettings" data-parent="#editorAccordion">
+                <div class="card-body">                     
+                    <div>                                       
+                        <label asp-for="ContainerMode"><input asp-for="ContainerMode" /> @Html.DisplayNameFor(m => m.ContainerMode)</label>
+                        <span asp-validation-for="ContainerMode" class="text-danger"></span>
+                    </div>                       
+                    <div class="form-group">                                        
+                        <label asp-for="ItemsPerRow">@Html.DisplayNameFor(m => m.ItemsPerRow)</label>
+                        <input asp-for="ItemsPerRow" class="form-control" /> 
+                        <span asp-validation-for="ItemsPerRow" class="text-danger"></span>
+                    </div>    
+                    <div class="form-group">                                        
+                        <label asp-for="BackgroundColor">@Html.DisplayNameFor(m => m.BackgroundColor)</label>
+                        <input asp-for="BackgroundColor" type="color" class="form-control" /> 
+                        <span asp-validation-for="BackgroundColor" class="text-danger"></span>
+                    </div>  
+                </div>
+                </div>
+            </div>   
+        </form>   
+        <div class="card">
+            <div class="card-header" id="headingMenu">
+                <h2 class="mb-0">
+                    <button class="btn btn-link btn-block text-left collapsed" type="button" data-toggle="collapse" data-target="#collapseMenu" aria-expanded="false" aria-controls="collapseMenu">
+                    Blokkok
+                    </button>
+                </h2>
+            </div>
+            <div id="collapseMenu" class="collapse" aria-labelledby="headingMenu" data-parent="#editorAccordion">
+            <div class="card-body">
+                <div class="form-group">          
+                    <label asp-for="BlockItems">@Html.DisplayNameFor(m => m.BlockItems)</label><br />
+                    <button class="btn btn-primary m-1" onclick="addBlockItem()">Hozzáadás</button><br />
+                    <ol id="blockItemsList" class="menu-item-list list-group">
+                        @foreach (BlockItem item in Model.BlockItems)
+                        {                                                     
+                            <li class="list-group-item">      
+                                <label>Azonosító</label>                       
+                                <div class="input-group m-1">
+                                    <input type="text" placeholder="Azonosító" class="blockitemid form-control h-auto" value="@item.BlockItemId" />
+                                    <div class="input-group-append">
+                                        <button class="btn btn-danger" onclick="removeBlockItem(this)"><i class="fas fa-trash"></i></button>
+                                    </div>
+                                </div>                                 
+                                <label>Cím</label>
+                                <div class="input-group m-1">
+                                    <input type="text" placeholder="Cím" class="title form-control h-auto" value="@item.Title" />
+                                    <input type="color" placeholder="Cím színe" class="titlecolor form-control h-auto" value="@item.TitleColor" />
+                                    <select class="form-control titlealign" >
+                                        <option value="Left" selected="@(item.TitleAlign == AlignEnum.Left)">Balra igazított</option>
+                                        <option value="Center" selected="@(item.TitleAlign == AlignEnum.Center)">Középre igazított</option>
+                                        <option value="Right" selected="@(item.TitleAlign == AlignEnum.Right)">Jobbra igazított</option>
+                                    </select>  
+                                </div> 
+                                <label>Tartalom</label>
+                                <textarea class="form-control content" placeholder="Tartalom..">@item.Content</textarea>
+                                <label>Ikon/Kép</label>
+                                <div class="input-group m-1">
+                                    <input type="text" placeholder="Ikon" class="icon form-control h-auto" value="@item.IconName" />
+                                    <input type="text" placeholder="Kép" class="image form-control h-auto" value="@item.ImageHref" />
+                                </div> 
+                                <label>Chart</label>
+                                <select class="form-control charttype" >
+                                    <option value="None" selected="@(item.ChartType == ChartType.None)">Nincs</option>
+                                    <option value="Bar" selected="@(item.ChartType == ChartType.Bar)">Bar</option>
+                                    <option value="Pie" selected="@(item.ChartType == ChartType.Pie)">Kör</option>
+                                    <option value="Doughnut" selected="@(item.ChartType == ChartType.Doughnut)">Fánk</option>
+                                </select> 
+                                <button class="btn btn-primary m-1" onclick="addChartData(this)">Adat felvitele</button><br />
+                                <ul class="chartdata">
+                                    @foreach (ChartRow row in item.ChartRows)
+                                    {   
+                                        <li>
+                                            <div class="input-group m-1">
+                                                <input type="text" placeholder="Címke" class="chartdatalabel form-control h-auto" value="@row.Label" />
+                                                <input type="number" placeholder="Adat" class="chartdatadata form-control h-auto" value="@row.Data" />
+                                                <input type="color" placeholder="Címke" class="chartdatacolor form-control h-auto" value="@row.Color" />
+                                                <div class="input-group-append">
+                                                    <button class="btn btn-danger" onclick="removeChartRowItem(this)"><i class="fas fa-trash"></i></button>
+                                                </div>
+                                            </div>     
+                                        </li>
+                                    }
+                                </ul>
+                            </li>                             
+                        }            
+                    </ol>
+                </div>
+            </div>
+            </div>               
+        </div> 
+        </div>        
+    }         
+</div>
+<div class="modal-footer">
+    @if(Model.IsSuccess)
+    {
+        <button type="button" class="btn btn-primary" data-dismiss="modal">Rendben</button>
+    }
+    else 
+    {
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Mégse</button>
+        <button type="submit" onclick="saveComponentData()" class="btn btn-primary">Mentés</button>
+    }
+</div>
+
+<script>
+    var blockTemplate = 
+        "<li class='list-group-item'><label>Azonosító</label>" +
+        "<div class='input-group m-1'><input type='text' placeholder='Azonosító' class='blockitemid form-control h-auto' />" +
+        "<div class='input-group-append'><button class='btn btn-danger' onclick='removeBlockItem(this)'><i class='fas fa-trash'></i></button></div></div>" +
+        "<label>Cím</label><div class='input-group m-1'>" +
+            "<input type='text' placeholder='Cím' class='title form-control h-auto' />" +
+            "<input type='color' placeholder='Cím színe' class='titlecolor form-control h-auto' />" +
+            "<select class='form-control titlealign'><option value='Left'>Balra igazított</option>" +
+            "<option value='Center'>Középre igazított</option><option value='Right'>Jobbra igazított</option></select></div>" +
+            "<label>Tartalom</label><textarea class='form-control content' placeholder='Tartalom..'></textarea>" +
+            "<label>Ikon/Kép</label><div class='input-group m-1'><input type='text' placeholder='Ikon' class='icon form-control h-auto' />" + 
+            "<input type='text' placeholder='Kép' class='image form-control h-auto' /></div><label>Chart</label>" +
+            "<select class='form-control charttype'><option value='None'>Nincs</option><option value='Bar'>Bar</option><option value='Pie'>Kör</option><option value='Doughnut'>Fánk</option></select>" +
+            "<button class='btn btn-primary m-1' onclick='addChartData(this)'>Adat felvitele</button><br />" +
+            "<ul class='chartdata'></ul></li>";
+
+    var chartRowTemplate = "<li><div class='input-group m-1'>"+
+        "<input type='text' placeholder='Címke' class='chartdatalabel form-control h-auto' />"+
+        "<input type='number' placeholder='Adat' class='chartdatadata form-control h-auto' />"+
+        "<input type='color' placeholder='Címke' class='chartdatacolor form-control h-auto' />"+
+        "<div class='input-group-append'><button class='btn btn-danger' onclick='removeChartRowItem(this)'><i class='fas fa-trash'></i></button></div>"+
+        "</div></li>";
+    
+    $(document).ready(function() {        
+        if("@Model.IsSuccess" == "True") {
+            reloadContent();
+        } else {
+            $(".icon").each(function() {
+                autocomplete($(this).get(0), iconNames);
+            });
+            $(".image").each(function() {
+                autocomplete($(this).get(0), files);
+            });
+        }
+    });
+    
+    function getBlockItemList() {
+        var items = [];
+        $("#blockItemsList > li").each(function() {
+            var item = {
+                BlockItemId: $(this).find('.blockitemid').val(),
+                Title: $(this).find('.title').val(),
+                TitleColor: $(this).find('.titlecolor').val(),
+                TitleAlign: $(this).find('.titlealign').val(),
+                Content: $(this).find('.content').val(),
+                ImageHref: $(this).find('.image').val(),
+                IconName: $(this).find('.icon').val(),
+                ChartType: $(this).find('.charttype').val(),
+                ChartRows: []
+            };
+            $(this).find('ul > li').each(function() {
+                item.ChartRows.push({
+                    Label: $(this).find('.chartdatalabel').val(),
+                    Data: $(this).find('.chartdatadata').val(),
+                    Color: $(this).find('.chartdatacolor').val()
+                });
+            });
+            items.push(item);
+        });        
+        return items;        
+    }
+
+    function addBlockItem() {
+        let appended = $("#blockItemsList").append(blockTemplate);
+        autocomplete(appended.children("li:last-child").find('.icon').get(0), iconNames);
+        autocomplete(appended.children("li:last-child").find('.image').get(0), files);
+    }
+    
+    function removeBlockItem(element) {
+        $(element).parent().parent().parent().remove();
+    }
+    
+    function addChartData(element) {
+        $(element).parent().find('.chartdata').append(chartRowTemplate);
+    }
+
+    function removeChartRowItem(element) {
+        $(element).parent().parent().parent().remove();
+    }
+
+    function saveComponentData() {
+      var blocksForm = $('#projectDataForm').serializeObject();
+        blocksForm.BlockItems = getBlockItemList();
+         $.ajax({
+            type: "POST",
+            url: "@Url.Action("SaveBlocksComponent", "Editor")",
+            data: blocksForm,
+            success: function (res) {            
+                $('#componentEditorModal').modal('show').find('.modal-content').html(res);     
+            }
+        });
+    }
+</script>

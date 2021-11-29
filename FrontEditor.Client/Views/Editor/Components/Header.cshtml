@@ -1,42 +1,52 @@
 @using FrontEditor.Client.Models.EditorModels
 @model EditorHeaderViewModel
 
-<nav class='navbar @(Model.MobileMenu ? " " : "navbar-expand-md ") @(Model.FixedMenu ? "fixed-top" : " ") @(Model.ColorSheme == ColorShemeEnum.Dark ? "navbar-dark" : "navbar-light")' style="background-color: @(Model.BackgroundColor);">
+<nav class='navbar @(Model.MobileMenu ? " " : "navbar-expand-md ") @(Model.FixedMenu ? "fixed-top" : " ") @(Model.ColorSheme == ColorShemeEnum.Dark ? "navbar-dark" : "navbar-light")'
+    style="background-color: @(Model.BackgroundColor);">
     <div class='@(Model.ContainerMode ? "container" : "container-fluid")'>
-        <a class="navbar-brand" href="/">        
-            @if(!string.IsNullOrEmpty(Model.LogoImage))
+        <a class="navbar-brand" href="/">
+            @if (!string.IsNullOrEmpty(Model.LogoImage))
             {
-                <img src='@(Model.LogoImage.StartsWith("http") ? Model.LogoImage : (ViewBag.IsClientPreview == null) ? "images/" + Model.LogoImage : "/images/projects/"+Model.ProjectId + "/" + Model.LogoImage)' width="30" height="30">
+                <img src='@(Model.LogoImage.StartsWith("http") ? Model.LogoImage : (ViewBag.IsClientPreview == null) ? "images/" + Model.LogoImage : "/images/projects/"+Model.ProjectId + "/" + Model.LogoImage)'
+                width="30" height="30">
             }
-            else if(!string.IsNullOrEmpty(Model.Icon))
+            else if (!string.IsNullOrEmpty(Model.Icon))
             {
-                <i class="fas fa-@Model.Icon"></i> 
+                <i class="fas fa-@Model.Icon"></i>
             }
             @Model.Title
         </a>
-        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarFrontEditor" aria-controls="navbarFrontEditor" aria-expanded="false" aria-label="Menü lenyitása">
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarFrontEditor"
+            aria-controls="navbarFrontEditor" aria-expanded="false" aria-label="Menü lenyitása">
             <span class="navbar-toggler-icon"></span>
         </button>
         <div class="collapse navbar-collapse" id="navbarFrontEditor">
             <ul class='navbar-nav mr-auto'>
-                @foreach((MenuItem item, int i) in Model.MenuItems.Select((value, i) => ( value, i )))
+                @foreach ((MenuItem item, int i) in Model.MenuItems.Select((value, i) => (value, i)))
                 {
                     <li class='nav-item @(item.MenuItems.Count > 0 ? "dropdown" : "")'>
-                        <a 
-                            class='nav-link @(item.MenuItems.Count > 0 ? "dropdown-toggle" : "")' 
-                            id='menu-item-@(i)'
-                            @(item.MenuItems.Count > 0 ? "data-toggle=dropdown aria-haspopup=true aria-expanded=false" : "")
-                            href='@(!string.IsNullOrEmpty(item.Href) && item.MenuItems.Count > 0 ? item.Href : "#") '
-                            target='@(item.TargetBlank ? "_blank" : "_self")'>                            
-                            @if(!string.IsNullOrEmpty(item.Icon)) { <i class='fas fa-@item.Icon'></i> } @item.Title
+                        <a class='nav-link @(item.MenuItems.Count > 0 ? "dropdown-toggle" : "")' id='menu-item-@(i)'
+                        @(item.MenuItems.Count > 0 ? "data-toggle=dropdown aria-haspopup=true aria-expanded=false" : "")
+                        href='@(!string.IsNullOrEmpty(item.Href) && item.MenuItems.Count == 0 ? item.Href : "#") '
+                        target='@(item.TargetBlank ? "_blank" : "_self")'>
+                            @if (!string.IsNullOrEmpty(item.Icon))
+                            {
+                                <i class='fas fa-@item.Icon'></i>
+                            }
+                            @item.Title
                         </a>
-                        @if(item.MenuItems.Count > 0) 
+                        @if (item.MenuItems.Count > 0)
                         {
-                            <div class='dropdown-menu' aria-labelledby='menu-item-@(i)'>    
-                                @foreach(MenuItem sub in item.MenuItems)
+                            <div class='dropdown-menu' aria-labelledby='menu-item-@(i)'>
+                                @foreach (MenuItem sub in item.MenuItems)
                                 {
-                                    <a class='dropdown-item' href='@(!string.IsNullOrEmpty(sub.Href) ? sub.Href : "#")' target='@(sub.TargetBlank ? "_blank" : "_self")' >
-                                        @if(!string.IsNullOrEmpty(sub.Icon)) { <i class='fas fa-@sub.Icon'></i> } @sub.Title
+                                    <a class='dropdown-item' href='@(!string.IsNullOrEmpty(sub.Href) ? sub.Href : "#")'
+                            target='@(sub.TargetBlank ? "_blank" : "_self")'>
+                                        @if (!string.IsNullOrEmpty(sub.Icon))
+                                        {
+                                            <i class='fas fa-@sub.Icon'></i>
+                                        }
+                                        @sub.Title
                                     </a>
                                 }
                             </div>
@@ -44,7 +54,7 @@
                     </li>
                 }
             </ul>
-            @if(Model.ShowSearchBox) 
+            @if (Model.ShowSearchBox)
             {
                 <form class="form-inline my-2 my-md-0">
                     <input class="form-control" type="text" placeholder="Keresés..">
@@ -53,7 +63,7 @@
         </div>
     </div>
 </nav>
-@if(Model.FixedMenu)
+@if (Model.FixedMenu)
 {
     <navbar class="navbar"> <a class="navbar-brand" href="/">#</a> </navbar>
 }

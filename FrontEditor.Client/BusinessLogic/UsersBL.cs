@@ -5,22 +5,21 @@ using System.Text;
 using System.Threading.Tasks;
 using FrontEditor.Client.Models;
 using FrontEditor.Client.Models.Entities;
-using FrontEditor.Client.Models.Enums;
 using Microsoft.AspNetCore.Identity;
 
 namespace FrontEditor.Client.BusinessLogic
 {
-    public static class UsersBL 
+    public static class UsersBL
     {
         public static List<UserViewModel> GetUserList(FrontEditorContext _context)
         {
             List<UserViewModel> response = new List<UserViewModel>();
             List<User> users = _context.Users.ToList();
-            foreach(User user in users)
+            foreach (User user in users)
             {
                 int projects = _context.Projects.Where(x => x.Owner == user).Count();
-                IdentityUserRole<int> urole = _context.UserRoles.Where(x => x.UserId == user.Id).FirstOrDefault();                 
-                if(urole == null)                    
+                IdentityUserRole<int> urole = _context.UserRoles.Where(x => x.UserId == user.Id).FirstOrDefault();
+                if (urole == null)
                     response.Add(new UserViewModel(user, 2, projects));
                 else
                     response.Add(new UserViewModel(user, urole.RoleId, projects));
@@ -35,21 +34,21 @@ namespace FrontEditor.Client.BusinessLogic
             IdentityUserRole<int> urole = _context.UserRoles.Where(x => x.UserId == user.Id).FirstOrDefault();
             return new UserViewModel(user, urole.RoleId, projects);
         }
-        
+
         public static async Task<UserViewModel> CreateUser(FrontEditorContext _context, UserManager<User> _userManager, UserViewModel model)
         {
             try
             {
                 User user = _context.Users.Where(x => x.Email == model.Email).FirstOrDefault();
-                if(user != null)
+                if (user != null)
                 {
                     throw new Exception("Ezzel az e-mail címmel már létezik felhasználó!");
                 }
-                else 
+                else
                 {
                     user = new User
-                    {       
-                        DisplayName = model.DisplayName,         
+                    {
+                        DisplayName = model.DisplayName,
                         UserName = model.UserName,
                         Email = model.Email,
                         LastActive = DateTime.Now,
@@ -59,34 +58,34 @@ namespace FrontEditor.Client.BusinessLogic
                     var result = await _userManager.CreateAsync(user, model.NewPassword);
                     if (result.Succeeded)
                     {
-                        _context.UserRoles.Add(new IdentityUserRole<int>(){ UserId = user.Id, RoleId = model.RoleId });
-                        _context.SaveChanges();                                
+                        _context.UserRoles.Add(new IdentityUserRole<int>() { UserId = user.Id, RoleId = model.RoleId });
+                        _context.SaveChanges();
                         model.UserId = user.Id;
-                    }              
+                    }
                     foreach (var error in result.Errors)
                     {
-                        if(error.Code == "DuplicateUserName") 
+                        if (error.Code == "DuplicateUserName")
                             model.ErrorText += "Ezzel a felhasználónévvel már létezik felhasználó!<br/>";
-                        else if(error.Code == "PasswordTooShort") 
+                        else if (error.Code == "PasswordTooShort")
                             model.ErrorText += "A jelszó legalább 6 karakter!<br/>";
-                        else if(error.Code == "PasswordRequiresNonAlphanumeric") 
+                        else if (error.Code == "PasswordRequiresNonAlphanumeric")
                             model.ErrorText += "A jelszó tartalmaz legalább egy nem alfanumerikus karaktert!<br/>";
-                        else if(error.Code == "PasswordRequiresDigit") 
+                        else if (error.Code == "PasswordRequiresDigit")
                             model.ErrorText += "A jelszó legalább egy számot tartalmaz!<br/>";
-                        else if(error.Code == "PasswordRequiresUpper") 
+                        else if (error.Code == "PasswordRequiresUpper")
                             model.ErrorText += "A jelszó legalább egy nagybetűt tartalmaz!<br/>";
-                        else if(error.Code == "PasswordRequiresLower") 
-                            model.ErrorText += "A jelszó legalább egy kisbetűt tartalmaz!<br/>";                        
+                        else if (error.Code == "PasswordRequiresLower")
+                            model.ErrorText += "A jelszó legalább egy kisbetűt tartalmaz!<br/>";
                         else
                             model.ErrorText += error.Description + "<br/>";
                     }
-                    model.NewUser = true;         
+                    model.NewUser = true;
                     model.Registration = DateTime.Now;
-                    model.LastActive = model.Registration;                                                       
-                    model.DatasChanged = true;            
+                    model.LastActive = model.Registration;
+                    model.DatasChanged = true;
                 }
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 model.ErrorText = ex.Message;
             }
@@ -126,16 +125,16 @@ namespace FrontEditor.Client.BusinessLogic
             string newPass = UsersBL.GeneratePassword(_userManager);
             await _userManager.RemovePasswordAsync(usr);
             var result = await _userManager.AddPasswordAsync(usr, newPass);
-            if(result.Succeeded)
+            if (result.Succeeded)
             {
                 model.NewPassword = newPass;
             }
             else
             {
-                foreach(IdentityError error in result.Errors)
-                {                    
+                foreach (IdentityError error in result.Errors)
+                {
                     model.ErrorText += error.Description + "<br />";
-                }                
+                }
             }
             return model;
         }
@@ -144,7 +143,7 @@ namespace FrontEditor.Client.BusinessLogic
         {
             User user = _context.Users.Where(x => x.Id == uId).FirstOrDefault();
             List<Project> projects = _context.Projects.Where(x => x.Owner == user).ToList();
-            foreach(Project proj in projects) 
+            foreach (Project proj in projects)
             {
                 _context.Projects.Remove(proj);
             }
@@ -192,32 +191,33 @@ namespace FrontEditor.Client.BusinessLogic
 
         public static async Task<PasswordChangeViewModel> ChangePassword(FrontEditorContext _context, UserManager<User> _userManager, System.Security.Claims.ClaimsPrincipal User, PasswordChangeViewModel model)
         {
-            User user = await _userManager.GetUserAsync(User);                
+            User user = await _userManager.GetUserAsync(User);
             await _userManager.RemovePasswordAsync(user);
             var result = await _userManager.AddPasswordAsync(user, model.NewPassword);
             if (result.Succeeded)
             {
-                model = new PasswordChangeViewModel() {
+                model = new PasswordChangeViewModel()
+                {
                     PasswordChanged = true
-                };              
-            }   
+                };
+            }
             else
-            {           
+            {
                 foreach (var error in result.Errors)
                 {
-                    if(error.Code == "PasswordTooShort") 
+                    if (error.Code == "PasswordTooShort")
                         model.ErrorText += "A jelszó legalább 6 karakter!<br />";
-                    else if(error.Code == "PasswordRequiresNonAlphanumeric") 
+                    else if (error.Code == "PasswordRequiresNonAlphanumeric")
                         model.ErrorText += "A jelszó tartalmaz legalább egy nem alfanumerikus karaktert!<br />";
-                    else if(error.Code == "PasswordRequiresDigit") 
+                    else if (error.Code == "PasswordRequiresDigit")
                         model.ErrorText += "A jelszó legalább egy számot tartalmaz!<br />";
-                    else if(error.Code == "PasswordRequiresUpper") 
+                    else if (error.Code == "PasswordRequiresUpper")
                         model.ErrorText += "A jelszó legalább egy nagybetűt tartalmaz!<br />";
-                    else if(error.Code == "PasswordRequiresLower") 
-                        model.ErrorText += "A jelszó legalább egy kisbetűt tartalmaz!<br />";         
+                    else if (error.Code == "PasswordRequiresLower")
+                        model.ErrorText += "A jelszó legalább egy kisbetűt tartalmaz!<br />";
                     else
                         model.ErrorText += error.Description + "<br />";
-                } 
+                }
             }
             return model;
         }
@@ -225,12 +225,12 @@ namespace FrontEditor.Client.BusinessLogic
         public static async Task<LoginViewModel> Login(FrontEditorContext _context, SignInManager<User> _signInManager, LoginViewModel model)
         {
             User usr = _context.Users.Where(x => x.Email == model.Email).FirstOrDefault();
-            if(usr == null)
+            if (usr == null)
             {
-               model.ErrorText += "Felhasználó nem található!";
+                model.ErrorText += "Felhasználó nem található!";
             }
-            else 
-            {                   
+            else
+            {
                 var result = await _signInManager.PasswordSignInAsync(usr, model.Password, model.RememberMe, false);
 
                 if (result.Succeeded)
@@ -249,15 +249,15 @@ namespace FrontEditor.Client.BusinessLogic
         public static async Task<RegisterViewModel> Register(FrontEditorContext _context, UserManager<User> _userManager, SignInManager<User> _signInManager, RegisterViewModel model)
         {
             User user = _context.Users.Where(x => x.Email == model.Email).FirstOrDefault();
-            if(user != null)
+            if (user != null)
             {
                 model.ErrorText += "Ezzel az e-mail címmel már létezik felhasználó!";
             }
-            else 
+            else
             {
                 user = new User
-                {       
-                    DisplayName = model.DisplayName,         
+                {
+                    DisplayName = model.DisplayName,
                     UserName = model.UserName,
                     Email = model.Email,
                     LastActive = DateTime.Now,
@@ -269,65 +269,65 @@ namespace FrontEditor.Client.BusinessLogic
                 if (result.Succeeded)
                 {
                     await _signInManager.SignInAsync(user, isPersistent: false);
-                    _context.UserRoles.Add(new IdentityUserRole<int>(){UserId = user.Id, RoleId = 2});
+                    _context.UserRoles.Add(new IdentityUserRole<int>() { UserId = user.Id, RoleId = 2 });
                     _context.SaveChanges();
-                }      
-                else 
+                }
+                else
                 {
                     foreach (var error in result.Errors)
                     {
-                        if(error.Code == "DuplicateUserName") 
+                        if (error.Code == "DuplicateUserName")
                             model.ErrorText += "Ezzel a felhasználónévvel már létezik felhasználó!<br />";
-                        else if(error.Code == "PasswordTooShort") 
+                        else if (error.Code == "PasswordTooShort")
                             model.ErrorText += "A jelszó legalább 6 karakter!<br />";
-                        else if(error.Code == "PasswordRequiresNonAlphanumeric") 
+                        else if (error.Code == "PasswordRequiresNonAlphanumeric")
                             model.ErrorText += "A jelszó tartalmaz legalább egy nem alfanumerikus karaktert!<br />";
-                        else if(error.Code == "PasswordRequiresDigit") 
+                        else if (error.Code == "PasswordRequiresDigit")
                             model.ErrorText += "A jelszó legalább egy számot tartalmaz!<br />";
-                        else if(error.Code == "PasswordRequiresUpper") 
+                        else if (error.Code == "PasswordRequiresUpper")
                             model.ErrorText += "A jelszó legalább egy nagybetűt tartalmaz!<br />";
-                        else if(error.Code == "PasswordRequiresLower") 
-                            model.ErrorText += "A jelszó legalább egy kisbetűt tartalmaz!<br />";                        
+                        else if (error.Code == "PasswordRequiresLower")
+                            model.ErrorText += "A jelszó legalább egy kisbetűt tartalmaz!<br />";
                         else
                             model.ErrorText += error.Description + "<br />";
-                    }  
-                }                 
+                    }
+                }
             }
             return model;
         }
-        
+
         public static async Task<PasswordResetViewModel> PasswordReset(FrontEditorContext _context, UserManager<User> _userManager, PasswordResetViewModel model)
         {
             User user = _context.Users.Where(
-                    x => x.Email == model.Email 
+                    x => x.Email == model.Email
                     && x.UserName == model.UserName).FirstOrDefault();
 
-            if(user == null)
+            if (user == null)
             {
                 model.ErrorText += "Felhasználó nem található!";
             }
-            else 
+            else
             {
                 await _userManager.RemovePasswordAsync(user);
                 var result = await _userManager.AddPasswordAsync(user, model.Password);
                 if (!result.Succeeded)
-                {          
+                {
                     foreach (var error in result.Errors)
                     {
-                        if(error.Code == "PasswordTooShort") 
+                        if (error.Code == "PasswordTooShort")
                             model.ErrorText += "A jelszó legalább 6 karakter!<br />";
-                        else if(error.Code == "PasswordRequiresNonAlphanumeric") 
+                        else if (error.Code == "PasswordRequiresNonAlphanumeric")
                             model.ErrorText += "A jelszó tartalmaz legalább egy nem alfanumerikus karaktert!<br />";
-                        else if(error.Code == "PasswordRequiresDigit") 
+                        else if (error.Code == "PasswordRequiresDigit")
                             model.ErrorText += "A jelszó legalább egy számot tartalmaz!<br />";
-                        else if(error.Code == "PasswordRequiresUpper") 
+                        else if (error.Code == "PasswordRequiresUpper")
                             model.ErrorText += "A jelszó legalább egy nagybetűt tartalmaz!<br />";
-                        else if(error.Code == "PasswordRequiresLower") 
-                            model.ErrorText += "A jelszó legalább egy kisbetűt tartalmaz!<br />";                        
+                        else if (error.Code == "PasswordRequiresLower")
+                            model.ErrorText += "A jelszó legalább egy kisbetűt tartalmaz!<br />";
                         else
                             model.ErrorText += error.Description + "<br />";
                     }
-                }    
+                }
             }
             return model;
         }

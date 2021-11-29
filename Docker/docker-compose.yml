@@ -6,12 +6,21 @@ services:
         command: --default-authentication-plugin=mysql_native_password
         restart: always
         ports:
-            - 3306:3306
+          - 3306:3306
+        networks:
+          - fronteditor
         environment:
             MYSQL_ROOT_PASSWORD: root
-            MYSQL_DATABASE: fronteditordb
-            MYSQL_USER: fronteditoruser
-            MYSQL_PASSWORD: fronteditorpass
-
         volumes:
             - ./init:/docker-entrypoint-initdb.d
+    client:
+        image: fronteditorclient:latest
+        ports:
+            - 5000:5000
+            - 5001:5001
+            - 3353:3353
+            - 3000:80
+        networks:
+          - fronteditor
+networks:
+    fronteditor:

@@ -1,86 +1,123 @@
-
 @using FrontEditor.Client.Models.EditorModels
-@{
-    EditorHeaderViewModel block1 = new EditorHeaderViewModel(1) {
-        ComponentId = "project-header",
-        ComponentName = "Menü",
-        Title = "Teszt projekt",
-        ColorSheme = ColorShemeEnum.Dark,
-        BackgroundColor = "DARK",
-        ContainerMode = false,
-        MobileMenu = false,
-        ShowSearchBox = true,
-        MenuItems = {
-            new MenuItem() 
-            {
-                Title = "ELSŐ MENÜPONT",
-                Href = "#",
-                TargetBlank = false
-            },
-            new MenuItem() 
-            {
-                Title = "MÁSODIK MENÜPONT",
-                Href = "#",
-                TargetBlank = false
-            },
-            new MenuItem() 
-            {
-                Title = "HARMADIK MENÜPONT",
-                Href = "#",
-                TargetBlank = false,
-                MenuItems = {                    
-                    new MenuItem() 
-                    {
-                        Title = "ELSŐ SUBMENÜPONT",
-                        Href = "#",
-                        TargetBlank = false
-                    },                                        
-                    new MenuItem() 
-                    {
-                        Title = "MÁSODIK SUBMENÜPONT",
-                        Href = "#",
-                        TargetBlank = false
-                    }
-                }
-            }
-        }
-    };
-    EditorBaseViewModel block2 = new EditorBaseViewModel("asd", 1) {
-        ComponentId = "project-footer",
-        ComponentName = "Lábrész"
+@model FrontEditor.Client.Models.EditorModels.EditorViewModel
 
-    };
-    EditorBaseViewModel[] modelItems = { 
-        block1,
-        block2
-    };
-}
-
- <button type="button" class="btn btn-primary collapse-item m-2" onclick="addComponent()"><i class="fas fa-plus-circle"></i> Komponens hozzáadása</button>
- 
-<div class="accordion" id="accordionEditor">
-    @foreach (EditorBaseViewModel block in modelItems)
+<button type="button" class="btn btn-primary collapse-item m-2" onclick="addComponent()"><i
+    class="fas fa-plus-circle"></i> Komponens hozzáadása</button>
+<ul class="list-group">
+  @{
+    int idx = 0;
+    foreach (EditorBaseViewModel block in Model.EditorData.Blocks)
     {
-        <div class="card">
-            <div class="card-header" id="heading@(block.ComponentName)">
-                <h2 class="mb-0">
-                    <button class="btn btn-link btn-block text-left collapsed" type="button" data-toggle="collapse" data-target="#collapse@(block.ComponentName)" aria-expanded="true" aria-controls="collapse@(block.ComponentName)">
-                    @block.ComponentName
-                    </button>
-                </h2>
-            </div>
-            <div id="collapse@(block.ComponentName)" class="collapse" aria-labelledby="heading@(block.ComponentName)" data-parent="#accordionEditor">
-                <div class="card-body">                    
-                    @if(block.GetType() == typeof(EditorHeaderViewModel))
-                    {
-                        @Html.Partial("Editors/" + block.ViewName, block)             
-                    }
-                    else 
-                    {
-                        <div class="alert alert-danger" role="alert">Ismeretlen blokktípus!</div>
-                    }
-                </div>
-            </div>
+      <li class="list-group-item d-flex justify-content-between align-items-center">
+        @(idx + 1). @block.ComponentName
+        <div class="editor-list-actions">
+          <button type="button" class="btn btn-primary mr-1" onclick="openComponentEditor(@(idx))"><i
+            class="fas fa-edit"></i> <span>Szerkesztés</span></button>
+          @if (block.GetType() != typeof(EditorHeaderViewModel) &&
+      block.GetType() != typeof(EditorFooterViewModel))
+          {
+            <button type="button" class="btn btn-danger" onclick="deleteComponentItem(@(idx))"><i
+            class="fas fa-trash-alt"></i> <span>Törlés</span></button>
+            @if (idx > 1)
+            {
+              <button type="button" class="btn btn-primary mr-1" onclick="moveComponentItem(@(idx), false)"><i
+            class="fas fa-arrow-up"></i> <span>Mozgatás fel</span></button>
+            }
+            @if (idx < Model.EditorData.Blocks.Count - 2)
+            {
+              <button type="button" class="btn btn-primary mr-1" onclick="moveComponentItem(@(idx), true)"><i
+            class="fas fa-arrow-down"></i> <span>Mozgatás le</span></button>
+            }
+          }
         </div>
+      </li>
+      idx = idx + 1;
+    }
+  }
+</ul>
+
+
+<script>
+  function addComponent() {
+    let projectId = @(Model.ProjectData.ProjectId);
+    $.ajax({
+      type: "GET",
+      url: "@Url.Action("AddComponent", "Editor")",
+      data: { projectId: projectId },
+      success: function (res) {
+        $("#componentEditorModal .modal-content").html(res);
+        $('#componentEditorModal').modal('show');
       }
-</div>
+    });
+  }
+
+  function openComponentEditor(idx) {
+    let projectId = @(Model.ProjectData.ProjectId);
+    $.ajax({
+      type: "GET",
+      url: "@Url.Action("EditComponent", "Editor")",
+      data: { projectId: projectId, componentIndex: idx },
+      success: function (res) {
+        $("#componentEditorModal .modal-content").html(res);
+        $('#componentEditorModal').modal('show');
+      }
+    });
+  }
+
+  function deleteComponentItem(idx) {
+    removeComponentIndex = idx;
+    $('#deleteComponentModal').modal('show');
+  }
+
+  function confirmDeleteComponent() {
+    let projectId = @(Model.ProjectData.ProjectId);
+    $.ajax({
+      type: "POST",
+      url: "@Url.Action("DeleteComponent", "Editor")",
+      data: { projectId: projectId, componentIndex: removeComponentIndex },
+      success: function (res) {
+        if (res === "SUCCESS") {
+          reloadContent();
+          showMessage("Sikeres törlés", "<p class='text-success'>Komponens törlése sikeresen megtörtént!</p>");
+        } else {
+          showMessage("Hiba!", "<p class='text-danger'>Hiba a felhasználó törlése során!<br />" + res + "</p>");
+        }
+      }
+    });
+  }
+
+
+  function moveComponentItem(idx, isDown) {
+    if (isDown) {
+      let projectId = @(Model.ProjectData.ProjectId);
+      $.ajax({
+        type: "POST",
+        url: "@Url.Action("MoveDownComponent", "Editor")",
+        data: { projectId: projectId, componentIndex: idx },
+        success: function (res) {
+          if (res === "SUCCESS") {
+            reloadContent();
+            showMessage("Sikeres mozgatás", "<p class='text-success'>Komponens mozgatása sikeresen megtörtént!</p>");
+          } else {
+            showMessage("Hiba!", "<p class='text-danger'>Hiba a komponens mozgatása során!<br />" + res + "</p>");
+          }
+        }
+      });
+    } else {
+      let projectId = @(Model.ProjectData.ProjectId);
+      $.ajax({
+        type: "POST",
+        url: "@Url.Action("MoveUpComponent", "Editor")",
+        data: { projectId: projectId, componentIndex: idx },
+        success: function (res) {
+          if (res === "SUCCESS") {
+            reloadContent();
+            showMessage("Sikeres mozgatás", "<p class='text-success'>Komponens mozgatása sikeresen megtörtént!</p>");
+          } else {
+            showMessage("Hiba!", "<p class='text-danger'>Hiba a komponens mozgatása során!<br />" + res + "</p>");
+          }
+        }
+      });
+    }
+  }
+</script>

@@ -1,324 +1,19 @@
 @using FrontEditor.Client.Models.EditorModels
-@using FrontEditor.Client.Models.Enums
 @model EditorViewModel
 
 @{
     Layout = "";
-    EditorViewModel TestData = new EditorViewModel() {
-        EditorData = new EditorModelData() {
-            Blocks = new List<EditorBaseViewModel>() {
-                new EditorHeaderViewModel(1) {
-                    Title = "TESZT ELŐNÉZET",
-                    Icon = "eye",
-                    FixedMenu = true,
-                    MobileMenu = false,
-                    ContainerMode = true,
-                    ShowSearchBox = false,
-                    ColorSheme = ColorShemeEnum.Dark,
-                    BackgroundColor = "#2e4967",
-                    MenuItems = {
-                        new MenuItem() {
-                            Icon = "user",
-                            Title = "Első menüpont",
-                            Href = "#",
-                            TargetBlank = false
-                        },                        
-                        new MenuItem() {
-                            Icon = "book",
-                            Title = "Második menüpont",
-                            Href = "#",
-                            TargetBlank = true
-                        },                        
-                        new MenuItem() {
-                            Icon = "layer-group",
-                            Title = "Lenyíló menüpont",
-                            MenuItems = {
-                                new MenuItem() {
-                                    Icon = "user",
-                                    Title = "Első menüpont",
-                                    Href = "#",
-                                    TargetBlank = false
-                                },                        
-                                new MenuItem() {
-                                    Icon = "book",
-                                    Title = "Második menüpont",
-                                    Href = "#",
-                                    TargetBlank = true
-                                }
-                            }
-                        }
-                    }
-                },
-                new EditorCarouselViewModel(1) {
-                    ComponentId = "1",
-                    ContainerMode = true,
-                    Controls = true,
-                    Indicators = true,
-                    AutoRun = true,
-                    AnimationMode = SliderAnimationModeEnum.Fade,
-                    HeightSize = 500,
-                    Captions = true,   
-                    CaptionsTextColor = "#fff",
-                    CaptionsTextBackgroundColor = "#000",
-                    PageInterval = 3000,
-                    CarouselItems = {
-                        new CarouselItem() {/*https://cdn.pixabay.com/photo/2021/04/22/06/40/duck-6198196_960_720.jpg*/
-                            Image = "duck.jpg",
-                            Title = "First slide",
-                            Description = "First slide description here"
-                        },
-                        new CarouselItem() {
-                            Image = "https://cdn.pixabay.com/photo/2020/11/06/19/12/kid-5718703_960_720.jpg",
-                            Title = "Second slide",
-                            Description = "Second slide description here"
-                        },
-                        new CarouselItem() {
-                            Image = "https://cdn.pixabay.com/photo/2019/10/02/06/27/mood-4520112_960_720.jpg",
-                            Title = "Third slide",
-                            Description = "Third slide description here"
-                        }
-                    }
-                },
-                new EditorBlocksViewModel(1) {
-                    ContainerMode = true,
-                    ItemsPerRow = 4,
-                    BackgroundColor = "#e4f1ff",
-                    BlockItems = {                                      
-                        new BlockItem() {
-                            BlockItemId = "nh4rthgeragy",
-                            Title="Egy kép",
-                            IconName="anchor",
-                            TitleAlign=AlignEnum.Center,
-                            TitleColor="#2e4967"
-
-                        },                                      
-                        new BlockItem() {
-                            BlockItemId = "nhtrhgeragy",
-                            Title="Egy kép",
-                            IconName="basketball-ball",
-                            TitleAlign=AlignEnum.Center,
-                            TitleColor="#2e4967"
-                        },                                      
-                        new BlockItem() {
-                            BlockItemId = "nagrdhgtry",
-                            Title="Egy kép",
-                            IconName="bicycle",
-                            TitleAlign=AlignEnum.Center,
-                            TitleColor="#2e4967"
-                        },                                      
-                        new BlockItem() {
-                            BlockItemId = "nahertgegy",
-                            Title="Egy kép",
-                            IconName="birthday-cake",
-                            TitleAlign=AlignEnum.Center,
-                            TitleColor="#2e4967"
-                        },
-                    }
-                },
-                new EditorBlocksViewModel(1) {
-                    ContainerMode = true,
-                    ItemsPerRow = 3,
-                    BlockItems = {                                                              
-                        new BlockItem() {
-                            BlockItemId = "nagregregy",
-                            Title="Egy kép",
-                            TitleAlign=AlignEnum.Left,
-                            TitleColor="#2e4967",
-                            ChartType = ChartType.Bar,
-                            ChartRows = {
-                                new ChartRow() {
-                                    Label="Red",
-                                    Data=12,
-                                    Color="rgba(255, 99, 132, 1)"
-                                },
-                                new ChartRow() {
-                                    Label="Blue",
-                                    Data=19,
-                                    Color="rgba(54, 162, 235, 1)"
-                                },
-                                new ChartRow() {
-                                    Label="Yellow",
-                                    Data=3,
-                                    Color="rgba(255, 206, 86, 1)"
-                                },
-                                new ChartRow() {
-                                    Label="Green",
-                                    Data=5,
-                                    Color="rgba(75, 192, 192, 1)"
-                                },
-                                new ChartRow() {
-                                    Label="Purple",
-                                    Data=2,
-                                    Color="rgba(153, 102, 255, 1)"
-                                },
-                                new ChartRow() {
-                                    Label="Orange",
-                                    Data=3,
-                                    Color="rgba(255, 159, 64, 1)"
-                                },
-                            }
-                        },                                      
-                        new BlockItem() {
-                            BlockItemId = "naggregrwey",
-                            Title="Egy kép",
-                            TitleAlign=AlignEnum.Center,
-                            TitleColor="#2e4967",
-                            ChartType = ChartType.Doughnut,
-                            ChartRows = {
-                                new ChartRow() {
-                                    Label="Red",
-                                    Data=12,
-                                    Color="rgba(255, 99, 132, 1)"
-                                },
-                                new ChartRow() {
-                                    Label="Blue",
-                                    Data=19,
-                                    Color="rgba(54, 162, 235, 1)"
-                                },
-                                new ChartRow() {
-                                    Label="Yellow",
-                                    Data=3,
-                                    Color="rgba(255, 206, 86, 1)"
-                                },
-                                new ChartRow() {
-                                    Label="Green",
-                                    Data=5,
-                                    Color="rgba(75, 192, 192, 1)"
-                                },
-                                new ChartRow() {
-                                    Label="Purple",
-                                    Data=2,
-                                    Color="rgba(153, 102, 255, 1)"
-                                },
-                                new ChartRow() {
-                                    Label="Orange",
-                                    Data=3,
-                                    Color="rgba(255, 159, 64, 1)"
-                                },
-                            }
-                        },                                      
-                        new BlockItem() {
-                            BlockItemId = "nasdbgdfervgy",
-                            Title="Egy kép",
-                            TitleAlign=AlignEnum.Right,
-                            TitleColor="#2e4967",
-                            ChartType = ChartType.Pie,
-                            ChartRows = {
-                                new ChartRow() {
-                                    Label="Red",
-                                    Data=12,
-                                    Color="rgba(255, 99, 132, 1)"
-                                },
-                                new ChartRow() {
-                                    Label="Blue",
-                                    Data=19,
-                                    Color="rgba(54, 162, 235, 1)"
-                                },
-                                new ChartRow() {
-                                    Label="Yellow",
-                                    Data=3,
-                                    Color="rgba(255, 206, 86, 1)"
-                                },
-                                new ChartRow() {
-                                    Label="Green",
-                                    Data=5,
-                                    Color="rgba(75, 192, 192, 1)"
-                                },
-                                new ChartRow() {
-                                    Label="Purple",
-                                    Data=2,
-                                    Color="rgba(153, 102, 255, 1)"
-                                },
-                                new ChartRow() {
-                                    Label="Orange",
-                                    Data=3,
-                                    Color="rgba(255, 159, 64, 1)"
-                                },
-                            }
-                        }
-                    }
-                },
-                new EditorBlocksViewModel(1) {
-                    ContainerMode = true,
-                    ItemsPerRow = 2,
-                    BackgroundColor = "#e4f1ff",
-                    BlockItems = {                                      
-                        new BlockItem() {
-                            BlockItemId = "nagyddd",
-                            Title="Egy kép",
-                            TitleAlign=AlignEnum.Right,
-                            TitleColor="#2e4967"
-                        },                                      
-                        new BlockItem() {
-                            BlockItemId = "nagydd",
-                            Title="Egy kép",
-                            TitleAlign=AlignEnum.Left,
-                            TitleColor="#2e4967"
-                        },                                      
-                        new BlockItem() {
-                            BlockItemId = "nagyf",
-                            Title="Egy kép",
-                            TitleAlign=AlignEnum.Right,
-                            TitleColor="#2e4967"
-                        },                                      
-                        new BlockItem() {
-                            BlockItemId = "nagyd",
-                            Title="Egy kép",
-                            TitleAlign=AlignEnum.Left,
-                            TitleColor="#2e4967"
-                        }
-                    }
-                },
-                new EditorBlocksViewModel(1) {
-                    ContainerMode = true,
-                    ItemsPerRow = 1,
-                    BlockItems = {                        
-                        new BlockItem() {
-                            BlockItemId = "nagy",
-                            Title="Egy kép",
-                            TitleAlign = AlignEnum.Center,
-                            TitleColor="#2e4967",
-                            Content = "<p>Lorem ipsum ifbewriuniasdnbfci9u dnifirue.</p>",
-                            ImageHref = "duck.jpg"
-                        }
-                    }
-                },
-                new EditorFooterViewModel(1) {
-                    CopyTextExtended = "Kacsás honlap, minden jog fenntartva!",
-                    CopyTextAlign = AlignEnum.Right,
-                    ContainerMode = true,
-                    ColorSheme = ColorShemeEnum.Dark,
-                    BackgroundColor = "#2e4967",
-                    TextColor = "#fff",
-                    MenuItemsAlign = AlignEnum.Right,
-                    MenuItems = {
-                        new MenuItem() {
-                            Title = "Impresszum",
-                            Href = "#",
-                            TargetBlank = false,
-                            Icon = "eye"
-                        },
-                        new MenuItem() {
-                            Title = "Adatvédelmi szabályok",
-                            Href = "",
-                            TargetBlank = true,
-                            Icon = ""
-                        }
-                    }                    
-                }
-            }
-        }
-    };
 }
 <!DOCTYPE html>
 <html lang="hu">
+
 <head>
     <meta charset="utf-8" />
     <meta name="description" content="@Model.EditorData.Description">
     <meta name="author" content="FrontEditor website creator">
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>@Model.EditorData.Title</title>
-    @if(Model.Mode == EditorMode.Preview)
+    @if (Model.Mode == EditorMode.Preview)
     {
         <link rel="stylesheet" href="~/lib/fontawesome/css/all.min.css" />
         <link rel="stylesheet" href="~/lib/bootstrap/css/bootstrap.min.css" />
@@ -340,11 +35,12 @@
                 color: #fff;
                 opacity: 30%;
                 position: fixed;
-            }            
+            }
+
             @Model.EditorData.CustomCss
         </style>
     }
-    else 
+    else
     {
         <link rel="stylesheet" href="fontawesome/css/all.min.css" />
         <link rel="stylesheet" href="bootstrap/css/bootstrap.min.css" />
@@ -352,47 +48,49 @@
         <link rel="stylesheet" href="css/site.css" />
     }
 </head>
+
 <body>
-    @if(Model.Mode == EditorMode.Preview)
-    {       
+    @if (Model.Mode == EditorMode.Preview)
+    {
         <div class="preview-badge">ELŐNÉZET</div>
     }
-    @foreach(EditorBaseViewModel block in TestData.EditorData.Blocks)
+    @foreach (EditorBaseViewModel block in Model.EditorData.Blocks)
     {
-        @if(block.GetType() == typeof(EditorHeaderViewModel))
+        @if (block.GetType() == typeof(EditorHeaderViewModel))
         {
-            @Html.Partial("Components/Header", block)             
+            @Html.Partial("Components/Header", block)
         }
-        else if(block.GetType() == typeof(EditorCarouselViewModel))
+        else if (block.GetType() == typeof(EditorCarouselViewModel))
         {
-            @Html.Partial("Components/Carousel", block)             
+            @Html.Partial("Components/Carousel", block)
         }
-        else if(block.GetType() == typeof(EditorBlocksViewModel))
+        else if (block.GetType() == typeof(EditorBlocksViewModel))
         {
-            @Html.Partial("Components/Blocks", block)             
+            @Html.Partial("Components/Blocks", block)
         }
-        else if(block.GetType() == typeof(EditorFooterViewModel))
+        else if (block.GetType() == typeof(EditorFooterViewModel))
         {
-            @Html.Partial("Components/Footer", block)             
+            @Html.Partial("Components/Footer", block)
         }
-        else 
+        else
         {
             <div class="alert alert-danger" role="alert">Ismeretlen blokktípus!</div>
         }
     }
-    @if(Model.Mode == EditorMode.Preview)
-    {       
+    @if (Model.Mode == EditorMode.Preview)
+    {
         <script src="~/lib/popperjs/popper.min.js"></script>
-        <script src="~/lib/jquery/jquery-3.5.1.min.js"></script>   
+        <script src="~/lib/jquery/jquery-3.5.1.min.js"></script>
         <script src="~/lib/bootstrap/js/bootstrap.bundle.min.js"></script>
         <script src="~/lib/chartjs/Chart.min.js"></script>
     }
-    else 
-    {        
+    else
+    {
         <script src="popperjs/popper.min.js"></script>
-        <script src="jquery/jquery-3.5.1.min.js"></script>   
+        <script src="jquery/jquery-3.5.1.min.js"></script>
         <script src="bootstrap/js/bootstrap.bundle.min.js"></script>
         <script src="chartjs/Chart.min.js"></script>
     }
 </body>
+
 </html>

@@ -1,14 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using System.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using FrontEditor.Client.Models;
 using Microsoft.Extensions.Configuration;
 using FrontEditor.Client.Models.Entities;
-using Microsoft.EntityFrameworkCore;
 using FrontEditor.Client.BusinessLogic;
 using Microsoft.AspNetCore.Authorization;
 
@@ -22,7 +17,7 @@ namespace FrontEditor.Client.Controllers
         public IActionResult Index()
         {
             DashboardViewModel model = DashboardBL.DashboardDatas(_context);
-            return View(model);        
+            return View(model);
         }
 
         [AllowAnonymous]

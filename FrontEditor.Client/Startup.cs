@@ -26,8 +26,12 @@ namespace FrontEditor.Client
 
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
-        {                      
+        {
+#if DEBUG
             services.AddDbContext<FrontEditorContext>(options => options.UseMySQL(Configuration.GetValue<string>("FrontEditorClientConfig:FrontEditorMysql")));
+#else
+            services.AddDbContext<FrontEditorContext>(options => options.UseMySQL(Configuration.GetValue<string>("FrontEditorClientConfig:FrontEditorMysqlProd")));
+#endif
             services.AddIdentity<User, Role>().AddEntityFrameworkStores<FrontEditorContext>().AddDefaultTokenProviders();
 
             services.AddControllersWithViews();
@@ -50,7 +54,7 @@ namespace FrontEditor.Client
             app.UseStaticFiles();
 
             app.UseRouting();
-            
+
             app.UseAuthentication();
 
             app.UseAuthorization();
@@ -61,6 +65,12 @@ namespace FrontEditor.Client
                     name: "default",
                     pattern: "{controller=Home}/{action=Index}/{id?}");
             });
+
+            using (var serviceScope = app.ApplicationServices.GetService<IServiceScopeFactory>().CreateScope())
+            {
+                var context = serviceScope.ServiceProvider.GetRequiredService<FrontEditorContext>();
+                context.Database.Migrate();
+            }
         }
     }
 }

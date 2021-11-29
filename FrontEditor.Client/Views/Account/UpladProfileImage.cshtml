@@ -1,0 +1,57 @@
+@model ProfileImageChangeViewModel
+
+<div class="modal-header">
+    <h5 class="modal-title">Profilkép feltöltése</h5>
+    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+        <span aria-hidden="true">&times;</span>
+    </button>
+</div>
+<div class="modal-body">     
+    <div asp-validation-summary="ModelOnly" class="alert alert-danger" role="alert"></div>
+    <form method="post" id="profileUploadImageForm">
+        <div class="form-group">                                        
+            <input asp-for="Image" class="form-control" accept="image/*" />
+            <span asp-validation-for="Image" class="text-danger"></span>
+        </div> 
+    </form>          
+</div>
+
+<div class="modal-footer">
+    <button type="button" class="btn btn-secondary" data-dismiss="modal">Mégse</button>
+    <button type="button" onclick="removeImage()" class="btn btn-danger">Profilkép törlése</button>
+    <button type="button" onclick="uploadImage()" class="btn btn-primary">Feltöltés</button>
+</div>
+
+<script>
+    function removeImage() {
+        $.ajax({
+            type: 'POST',
+            url: "@Url.Action("RemoveProfileImage", "Account")",
+            cache: false,
+            contentType: false,
+            processData: false,
+            success: function (res) {       
+                $('#dataEditorModal').modal('show').find('.modal-content').html(res);        
+                reloadImage();
+            }
+	    });
+    }
+
+    function uploadImage() {       
+        var files = $('#Image').prop("files");                
+        formData = new FormData();
+        formData.append("Image", files[0]);
+        $.ajax({
+            type: 'POST',
+            url: "@Url.Action("UpladProfileImage", "Account")",
+            data: formData,
+            cache: false,
+            contentType: false,
+            processData: false,
+            success: function (res) {       
+                $('#dataEditorModal').modal('show').find('.modal-content').html(res);        
+                reloadImage();
+            }
+	    });
+    }
+</script>

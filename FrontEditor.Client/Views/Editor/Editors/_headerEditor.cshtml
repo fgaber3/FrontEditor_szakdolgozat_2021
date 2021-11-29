@@ -1,70 +1,288 @@
+@using FrontEditor.Client.Models
 @using FrontEditor.Client.Models.EditorModels
-@model EditorHeaderViewModel
+@model EditHeaderComponentViewModel
 
-<div asp-validation-summary="ModelOnly" class="alert alert-danger" role="alert"></div>
-<form method="post" id="projectDataForm">
-    <input asp-for="ProjectId" type="hidden" />
-    <input asp-for="ComponentId" type="hidden" />
-    <input asp-for="ComponentName" type="hidden" />
-    <div class="form-group">                                        
-        <label asp-for="Title">@Html.DisplayNameFor(m => m.Title)</label>
-        <input asp-for="Title" class="form-control" />                
-        <span asp-validation-for="Title" class="text-danger"></span>
-    </div> 
-    <div class="form-group">                                        
-        <label asp-for="LogoImage">@Html.DisplayNameFor(m => m.LogoImage)</label><br />
-        <button class="btn btn-primary">Kiválaszt..</button> //ha van megjelenít eltávolít ha nincs Kiválaszt<br/>
-        <span asp-validation-for="LogoImage" class="text-danger"></span>
-    </div> 
-    <div class="form-group">                                        
-        <label asp-for="FixedMenu"><input asp-for="FixedMenu" /> @Html.DisplayNameFor(m => m.FixedMenu)</label>                     
-        <span asp-validation-for="FixedMenu" class="text-danger"></span>
-    </div> 
-    <div class="form-group">                                        
-        <label asp-for="MobileMenu"><input asp-for="MobileMenu" /> @Html.DisplayNameFor(m => m.MobileMenu)</label>                     
-        <span asp-validation-for="MobileMenu" class="text-danger"></span>
-    </div> 
-    <div class="form-group">                                        
-        <label asp-for="ContainerMode"><input asp-for="ContainerMode" /> @Html.DisplayNameFor(m => m.ContainerMode)</label>
-        <span asp-validation-for="ContainerMode" class="text-danger"></span>
-    </div> 
-    <div class="form-group">                                        
-        <label asp-for="ShowSearchBox"><input asp-for="ShowSearchBox" /> @Html.DisplayNameFor(m => m.ShowSearchBox)</label>        
-        <span asp-validation-for="ShowSearchBox" class="text-danger"></span>
-    </div> 
-    <div class="form-group">                                        
-        <label asp-for="ColorSheme">@Html.DisplayNameFor(m => m.ColorSheme)</label> 
-        <select asp-for="ColorSheme" class="form-control" asp-items="@(new SelectList(Model.ColorShemes,"Value" ,"Key"))"></select>        
-        <span asp-validation-for="ColorSheme" class="text-danger"></span>
-    </div> 
-    <div class="form-group">                                        
-        <label asp-for="BackgroundColor">@Html.DisplayNameFor(m => m.BackgroundColor)</label>
-        <input asp-for="BackgroundColor" type="color" class="form-control" />                
-        <span asp-validation-for="BackgroundColor" class="text-danger"></span>
-    </div> 
-    <div class="form-group">          
-        <label asp-for="MenuItems">@Html.DisplayNameFor(m => m.MenuItems)</label><br />
-        <button class="btn btn-primary">Hozzáadás.</button><br />
-        <ul>
-            @foreach (MenuItem item in Model.MenuItems)
-            {
-                <li>
-                    @item.Title | @item.Href | @item.TargetBlank | ADDSUB/EDIT/DEL
-                    @if(item.MenuItems.Count > 0)
-                    {
-                        <ul>
-                            @foreach (MenuItem subItem in item.MenuItems)
-                            {
-                                <li>
-                                    @item.Title | @item.Href | @item.TargetBlank | EDIT/DEL
-                                </li>
-                            }            
-                        </ul>
-                    }
-                </li>
-            }            
-        </ul>
-    </div>
-</form>          
-<button type="submit" class="btn btn-primary">Mentés</button>
+<div class="modal-header">
+    <h5 class="modal-title">@(string.IsNullOrEmpty(Model.ComponentName) ? "Komponens létrehozása" : Model.ComponentName + " - Szerkesztés")</h5>
+    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+        <span aria-hidden="true">&times;</span>
+    </button>
+</div>
+<div class="modal-body">
+    @if(Model.IsSuccess)
+    {
+        <div class="alert alert-success" role="alert">
+            A komponens mentése sikeresen megtörtént!
+        </div>        
+    }  
+    else 
+    {             
+        <div asp-validation-summary="ModelOnly" class="alert alert-danger" role="alert">
+            @Model.ErrorText
+        </div>
+        <div class="accordion" id="editorAccordion">
+            <form method="post" id="projectDataForm">
+                <input asp-for="ProjectId" type="hidden" />
+                <input asp-for="ComponentIndex" type="hidden" />
+            <div class="card">
+                <div class="card-header" id="headingBase">
+                    <h2 class="mb-0">
+                        <button class="btn btn-link btn-block text-left" type="button" data-toggle="collapse" data-target="#collapseBase" aria-expanded="true" aria-controls="collapseBase">
+                        Alapadatok
+                        </button>
+                    </h2>
+                </div>
+                <div id="collapseBase" class="collapse show" aria-labelledby="headingBase" data-parent="#editorAccordion">
+                    <div class="card-body">
+                        <div class="form-group">                                        
+                            <label asp-for="ComponentName">@Html.DisplayNameFor(m => m.ComponentName)</label>
+                            <input asp-for="ComponentName" value="@Model.ComponentName" type="hidden" class="form-control" />      
+                            <input type="text" class="form-control" value="@Model.ComponentName" disabled />          
+                            <span asp-validation-for="ComponentName" class="text-danger"></span>
+                        </div>              
+                        <div class="form-group">                                        
+                            <label asp-for="ComponentId">@Html.DisplayNameFor(m => m.ComponentId)</label>
+                            <input asp-for="ComponentId" value="@Model.ComponentId" type="hidden" class="form-control" />      
+                            <input type="text" class="form-control" value="@Model.ComponentId" disabled />             
+                            <span asp-validation-for="ComponentId" class="text-danger"></span>
+                        </div>   
+                        <div class="form-group">                                        
+                            <label asp-for="Title">@Html.DisplayNameFor(m => m.Title)</label>
+                            <input asp-for="Title" class="form-control" />                
+                            <span asp-validation-for="Title" class="text-danger"></span>
+                        </div> 
+                        <div class="form-group"> 
+                            <label>Logo típusa</label><br />
+                            <select id="logoType" class="form-control" onchange="logoTypeChanged()" value="">
+                                <option value="none">Nincs</option>
+                                <option value="image">Kép</option>
+                                <option value="icon">Ikon</option>
+                            </select>       
+                        </div> 
+                        <div class="form-group">
+                            <div id="logoImage" class='@((!string.IsNullOrEmpty(Model.LogoImage)) ? " " : "d-none")'>
+                                <label asp-for="LogoImage">@Html.DisplayNameFor(m => m.LogoImage)</label><br />
+                                <input asp-for="LogoImage" class="form-control" />                
+                                <span asp-validation-for="LogoImage" class="text-danger"></span>
+                            </div>            
+                            <div id="logoIcon" class='@((string.IsNullOrEmpty(Model.LogoImage) && !string.IsNullOrEmpty(Model.Icon)) ? " " : "d-none")'>
+                                <label asp-for="Icon">@Html.DisplayNameFor(m => m.Icon)</label><br />
+                                <input asp-for="Icon" class="form-control" autocomplete="off" />                
+                                <span asp-validation-for="Icon" class="text-danger"></span>
+                            </div>                           
+                        </div> 
+                    </div>
+                </div>
+            </div>
+            <div class="card">
+                <div class="card-header" id="headingMenuSettings">
+                <h2 class="mb-0">
+                    <button class="btn btn-link btn-block text-left collapsed" type="button" data-toggle="collapse" data-target="#collapseMenuSettings" aria-expanded="false" aria-controls="collapseMenuSettings">
+                    Beállítások
+                    </button>
+                </h2>
+                </div>
+                <div id="collapseMenuSettings" class="collapse" aria-labelledby="headingMenuSettings" data-parent="#editorAccordion">
+                <div class="card-body">
+                    <div class="form-group">                                        
+                        <label asp-for="FixedMenu"><input asp-for="FixedMenu" /> @Html.DisplayNameFor(m => m.FixedMenu)</label>                     
+                        <span asp-validation-for="FixedMenu" class="text-danger"></span>
+                    </div> 
+                    <div class="form-group">                                        
+                        <label asp-for="MobileMenu"><input asp-for="MobileMenu" /> @Html.DisplayNameFor(m => m.MobileMenu)</label>                     
+                        <span asp-validation-for="MobileMenu" class="text-danger"></span>
+                    </div> 
+                    <div class="form-group">                                        
+                        <label asp-for="ContainerMode"><input asp-for="ContainerMode" /> @Html.DisplayNameFor(m => m.ContainerMode)</label>
+                        <span asp-validation-for="ContainerMode" class="text-danger"></span>
+                    </div> 
+                    <div class="form-group">                                        
+                        <label asp-for="ShowSearchBox"><input asp-for="ShowSearchBox" /> @Html.DisplayNameFor(m => m.ShowSearchBox)</label>        
+                        <span asp-validation-for="ShowSearchBox" class="text-danger"></span>
+                    </div> 
+                    <div class="form-group">                                        
+                        <label asp-for="ColorSheme">@Html.DisplayNameFor(m => m.ColorSheme)</label> 
+                        <select asp-for="ColorSheme" class="form-control" asp-items="@(new SelectList(Model.ColorShemes,"Value" ,"Key"))"></select>        
+                        <span asp-validation-for="ColorSheme" class="text-danger"></span>
+                    </div> 
+                    <div class="form-group">                                        
+                        <label asp-for="BackgroundColor">@Html.DisplayNameFor(m => m.BackgroundColor)</label>
+                        <input asp-for="BackgroundColor" type="color" class="form-control" />                
+                        <span asp-validation-for="BackgroundColor" class="text-danger"></span>
+                    </div>
+                </div>
+                </div>
+            </div>      
+        </form>    
+        <div class="card">
+            <div class="card-header" id="headingMenu">
+                <h2 class="mb-0">
+                    <button class="btn btn-link btn-block text-left collapsed" type="button" data-toggle="collapse" data-target="#collapseMenu" aria-expanded="false" aria-controls="collapseMenu">
+                    Menü
+                    </button>
+                </h2>
+            </div>
+            <div id="collapseMenu" class="collapse" aria-labelledby="headingMenu" data-parent="#editorAccordion">
+            <div class="card-body">
+                <div class="form-group">          
+                    <label asp-for="MenuItems">@Html.DisplayNameFor(m => m.MenuItems)</label><br />
+                    <button class="btn btn-primary" onclick="addMenuItem()">Hozzáadás</button><br />
+                    <ol id="menuItemsList" class="menu-item-list">
+                        @foreach (MenuItem item in Model.MenuItems)
+                        {
+                            <li>
+                                <div class="input-group m-1">
+                                    <input type="text" placeholder="Ikon" class="icon form-control" value="@item.Icon" />
+                                    <input type="text" placeholder="Cím" class="title form-control" value="@item.Title" />
+                                    <input type="text" placeholder="Link" class="href form-control" value="@item.Href" />
+                                    <label class="form-control">
+                                        <input type="checkbox" class="targetblank" @(item.TargetBlank ? "checked" : "") /> 
+                                        Új ablakban
+                                    </label>
+                                    <div class="input-group-append">
+                                        <button class="btn btn-primary" onclick="addSubMenuItem(this)"><i class="fas fa-plus-circle"></i></button>
+                                        <button class="btn btn-danger" onclick="removeMenuItem(this)"><i class="fas fa-trash"></i></button>
+                                    </div>
+                                </div>       
+                                    <ol>    
+                                        @foreach (MenuItem subItem in item.MenuItems)
+                                        { 
+                                            <li>
+                                                <div class="input-group m-1">
+                                                    <input type="text" placeholder="Ikon" class="icon form-control" value="@subItem.Icon" />
+                                                    <input type="text" placeholder="Cím" class="title form-control" value="@subItem.Title" />
+                                                    <input type="text" placeholder="Link" class="href form-control" value="@subItem.Href" />
+                                                    <label class="form-control">
+                                                        <input type="checkbox" class="targetblank"  @(subItem.TargetBlank ? "checked" : "") /> 
+                                                        Új ablakban
+                                                    </label>
+                                                    <div class="input-group-append">
+                                                        <button class="btn btn-danger" onclick="removeMenuItem(this)"><i class="fas fa-trash"></i></button>
+                                                    </div>
+                                                </div>   
+                                            </li>
+                                        }
+                                    </ol>
+                            </li>
+                        }            
+                    </ol>
+                </div>
+            </div>
+            </div>               
+        </div> 
+        </div>        
+    }         
+</div>
+<div class="modal-footer">
+    @if(Model.IsSuccess)
+    {
+        <button type="button" class="btn btn-primary" data-dismiss="modal">Rendben</button>
+    }
+    else 
+    {
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Mégse</button>
+        <button type="submit" onclick="saveComponentData()" class="btn btn-primary">Mentés</button>
+    }
+</div>
+<script>
+    var parentMenuTemplate = 
+        "<li><div class='input-group m-1'>" +
+        "<input type='text' placeholder='Ikon' class='icon form-control' value='' />" +
+        "<input type='text' placeholder='Cím' class='title form-control' value='' />" +
+        "<input type='text' placeholder='Link' class='href form-control' value='' />" +
+        "<label class='form-control'><input type='checkbox' class='targetblank' /> Új ablakban</label>" +
+        "<div class='input-group-append'>" +
+        "<button class='btn btn-primary' onclick='addSubMenuItem(this)'><i class='fas fa-plus-circle'></i></button>" +
+        "<button class='btn btn-danger' onclick='removeMenuItem(this)'><i class='fas fa-trash'></i></button>" +
+        "</div></div><ol></ol></li>";
 
+    var childMenuTemplate = 
+        "<li><div class='input-group m-1'>" +
+        "<input type='text' placeholder='Ikon' class='icon form-control' value='' />" +
+        "<input type='text' placeholder='Cím' class='title form-control' value='' />" +
+        "<input type='text' placeholder='Link' class='href form-control' value='' />" +
+        "<label class='form-control'><input type='checkbox' class='targetblank' /> Új ablakban</label>" +
+        "<div class='input-group-append'>" +
+        "<button class='btn btn-danger' onclick='removeMenuItem(this)'><i class='fas fa-trash'></i></button>" +
+        "</div></div></li>";                           
+    
+
+     $(document).ready(function() {
+        if("@Model.IsSuccess" == "True") {
+            reloadContent();
+        } else {
+            $("#logoType").val('@Model.LogoType');
+            autocomplete(document.getElementById("Icon"), iconNames);
+            autocomplete(document.getElementById("LogoImage"), files);        
+            $("#menuItemsList .icon").each(function() {
+                autocomplete($(this).get(0), iconNames);
+            });
+        }
+    });
+
+    function addMenuItem() {
+        let appended = $("#menuItemsList").append(parentMenuTemplate);
+        autocomplete(appended.children("li:last-child").find('.icon').get(0), iconNames);
+    }
+
+    function addSubMenuItem(element) {    
+        let appended = $(element).parent().parent().parent().find('ol').first().append(childMenuTemplate);        
+        autocomplete(appended.children("li:last-child").find('.icon').get(0), iconNames);
+    }
+
+    function removeMenuItem(element) {
+        $(element).parent().parent().parent().remove();
+    }
+    
+    function getMenuItemList() {
+        var items = [];
+        $("#menuItemsList > li").each(function() {
+            var item = {
+                Icon: $(this).find('.icon').val(),
+                Title: $(this).find('.title').val(),
+                Href: $(this).find('.href').val(),
+                TargetBlank: $(this).find('.targetblank').is(':checked') ? true : false,
+                MenuItems: []
+            };
+            $(this).find('ol > li').each(function() {
+                item.MenuItems.push({
+                    Icon: $(this).find('.icon').val(),
+                    Title: $(this).find('.title').val(),
+                    Href: $(this).find('.href').val(),
+                    TargetBlank: $(this).find('.targetblank').is(':checked') ? true : false,
+                    MenuItems: []
+                });
+            });
+            items.push(item);
+        });
+        return items;
+    }
+
+    function saveComponentData() {
+    var headerForm = $('#projectDataForm').serializeObject();
+        headerForm.MenuItems = getMenuItemList();
+        $.ajax({
+            type: "POST",
+            url: "@Url.Action("SaveHeaderComponent", "Editor")",
+            data: headerForm,
+            success: function (res) {
+                $('#componentEditorModal').modal('show').find('.modal-content').html(res);          
+            }
+        });
+    }
+
+    function logoTypeChanged() {
+        $( "#Icon" ).val('');
+        $( "#LogoImage" ).val('');
+        if($('#logoType').val() === 'image') {
+            $( "#logoImage" ).removeClass('d-none');
+            $( "#logoIcon" ).addClass('d-none');
+        } else if($('#logoType').val() === 'icon') {
+            $( "#logoImage" ).addClass('d-none');
+            $( "#logoIcon" ).removeClass('d-none');
+        } else if($('#logoType').val() === 'none') {      
+            $( "#logoImage" ).addClass('d-none');
+            $( "#logoIcon" ).addClass('d-none');
+        }
+    }
+</script>

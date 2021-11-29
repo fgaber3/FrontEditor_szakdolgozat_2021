@@ -1,8 +1,3 @@
-using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Configuration;
@@ -19,7 +14,7 @@ namespace FrontEditor.Client.Controllers
         protected readonly FrontEditorContext _context;
 
         public BaseController(ILogger<BaseController> logger, IConfiguration config, FrontEditorContext context)
-        {            
+        {
             _logger = logger;
             _config = config;
             _context = context;

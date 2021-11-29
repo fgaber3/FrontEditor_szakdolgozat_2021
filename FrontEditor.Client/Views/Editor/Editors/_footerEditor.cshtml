@@ -1,2 +1,207 @@
+@using FrontEditor.Client.Models
 @using FrontEditor.Client.Models.EditorModels
-@model EditorFooterViewModel
+@model EditFooterComponentViewModel
+<div class="modal-header">
+    <h5 class="modal-title">@(string.IsNullOrEmpty(Model.ComponentName) ? "Komponens létrehozása" : Model.ComponentName + " - Szerkesztés")</h5>
+    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+        <span aria-hidden="true">&times;</span>
+    </button>
+</div>
+<div class="modal-body">
+    @if(Model.IsSuccess)
+    {
+        <div class="alert alert-success" role="alert">
+            A komponens mentése sikeresen megtörtént!
+        </div>        
+    }  
+    else 
+    {             
+        <div asp-validation-summary="ModelOnly" class="alert alert-danger" role="alert">
+            @Model.ErrorText
+        </div>
+        <div class="accordion" id="editorAccordion">
+            <form method="post" id="projectDataForm">
+                <input asp-for="ProjectId" type="hidden" />
+                <input asp-for="ComponentIndex" type="hidden" />
+                <div class="card">
+                    <div class="card-header" id="headingBase">
+                        <h2 class="mb-0">
+                            <button class="btn btn-link btn-block text-left" type="button" data-toggle="collapse" data-target="#collapseBase" aria-expanded="true" aria-controls="collapseBase">
+                            Alapadatok
+                            </button>
+                        </h2>
+                    </div>
+                    <div id="collapseBase" class="collapse show" aria-labelledby="headingBase" data-parent="#editorAccordion">
+                        <div class="card-body">
+                            <div class="form-group">                                        
+                                <label asp-for="ComponentName">@Html.DisplayNameFor(m => m.ComponentName)</label>
+                                <input asp-for="ComponentName" type="hidden" class="form-control" />      
+                                <input type="text" class="form-control" value="@Model.ComponentName" disabled />          
+                                <span asp-validation-for="ComponentName" class="text-danger"></span>
+                            </div>              
+                            <div class="form-group">                                        
+                                <label asp-for="ComponentId">@Html.DisplayNameFor(m => m.ComponentId)</label>
+                                <input asp-for="ComponentId" type="hidden" class="form-control" />      
+                                <input type="text" class="form-control" value="@Model.ComponentId" disabled />             
+                                <span asp-validation-for="ComponentId" class="text-danger"></span>
+                            </div>   
+                            <div class="form-group">                                        
+                                <label asp-for="CopyTextExtended">@Html.DisplayNameFor(m => m.CopyTextExtended)</label>
+                                <textarea asp-for="CopyTextExtended" class="form-control">@Model.CopyTextExtended</textarea>
+                                <span asp-validation-for="CopyTextExtended" class="text-danger"></span>
+                            </div>                        
+                        </div>
+                    </div>
+                </div>
+                <div class="card">
+                    <div class="card-header" id="headingFooterSettings">
+                    <h2 class="mb-0">
+                        <button class="btn btn-link btn-block text-left collapsed" type="button" data-toggle="collapse" data-target="#collapseFooterSettings" aria-expanded="false" aria-controls="collapseFooterSettings">
+                        Beállítások
+                        </button>
+                    </h2>
+                    </div>
+                    <div id="collapseFooterSettings" class="collapse" aria-labelledby="headingFooterSettings" data-parent="#editorAccordion">
+                    <div class="card-body">
+                        <div class="form-group">                                        
+                            <label asp-for="CopyTextAlign">@Html.DisplayNameFor(m => m.CopyTextAlign)</label> 
+                            <select asp-for="CopyTextAlign" class="form-control" asp-items="@(new SelectList(Model.AlignTypes,"Value" ,"Key"))"></select>        
+                            <span asp-validation-for="CopyTextAlign" class="text-danger"></span>
+                        </div> 
+                        <div class="form-group">                                        
+                            <label asp-for="ColorSheme">@Html.DisplayNameFor(m => m.ColorSheme)</label> 
+                            <select asp-for="ColorSheme" class="form-control" asp-items="@(new SelectList(Model.ColorShemes,"Value" ,"Key"))"></select>        
+                            <span asp-validation-for="ColorSheme" class="text-danger"></span>
+                        </div> 
+                        <div class="form-group">                                        
+                            <label asp-for="TextColor">@Html.DisplayNameFor(m => m.TextColor)</label>
+                            <input asp-for="TextColor" type="color" class="form-control" />                
+                            <span asp-validation-for="TextColor" class="text-danger"></span>
+                        </div>                    
+                        <div class="form-group">                                        
+                            <label asp-for="BackgroundColor">@Html.DisplayNameFor(m => m.BackgroundColor)</label>
+                            <input asp-for="BackgroundColor" type="color" class="form-control" />                
+                            <span asp-validation-for="BackgroundColor" class="text-danger"></span>
+                        </div>
+                        <div class="form-group">                                        
+                            <label asp-for="ContainerMode"><input asp-for="ContainerMode" /> @Html.DisplayNameFor(m => m.ContainerMode)</label>
+                            <span asp-validation-for="ContainerMode" class="text-danger"></span>
+                        </div> 
+                        <div class="form-group">                                        
+                            <label asp-for="MenuItemsAlign">@Html.DisplayNameFor(m => m.MenuItemsAlign)</label> 
+                            <select asp-for="MenuItemsAlign" class="form-control" asp-items="@(new SelectList(Model.AlignTypes,"Value" ,"Key"))"></select>        
+                            <span asp-validation-for="MenuItemsAlign" class="text-danger"></span>
+                        </div> 
+                    </div>
+                    </div>
+                </div>
+            </form>  
+            <div class="card">
+                <div class="card-header" id="headingMenu">
+                    <h2 class="mb-0">
+                        <button class="btn btn-link btn-block text-left collapsed" type="button" data-toggle="collapse" data-target="#collapseMenu" aria-expanded="false" aria-controls="collapseMenu">
+                        Menü
+                        </button>
+                    </h2>
+                </div>
+                <div id="collapseMenu" class="collapse" aria-labelledby="headingMenu" data-parent="#editorAccordion">
+                <div class="card-body">
+                <div class="form-group">          
+                    <label asp-for="MenuItems">@Html.DisplayNameFor(m => m.MenuItems)</label><br />
+                    <button class="btn btn-primary" onclick="addMenuItem()">Hozzáadás</button><br />
+                    <ol id="menuItemsList" class="menu-item-list">
+                        @foreach (MenuItem item in Model.MenuItems)
+                        {
+                            <li>
+                                <div class="input-group m-1">
+                                    <input type="text" placeholder="Ikon" class="icon form-control" value="@item.Icon" />
+                                    <input type="text" placeholder="Cím" class="title form-control" value="@item.Title" />
+                                    <input type="text" placeholder="Link" class="href form-control" value="@item.Href" />
+                                    <label class="form-control">
+                                        <input type="checkbox" class="targetblank" @(item.TargetBlank ? "checked" : "") /> 
+                                        Új ablakban
+                                    </label>
+                                    <div class="input-group-append">
+                                        <button class="btn btn-danger" onclick="removeMenuItem(this)"><i class="fas fa-trash"></i></button>
+                                    </div>
+                                </div>    
+                            </li>
+                        }            
+                    </ol>
+                </div>
+            </div>
+            </div>               
+        </div>
+    </div>
+    }         
+</div>
+<div class="modal-footer">
+    @if(Model.IsSuccess)
+    {
+        <button type="button" class="btn btn-primary" data-dismiss="modal">Rendben</button>
+    }
+    else 
+    {
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Mégse</button>
+        <button type="submit" onclick="saveComponentData()" class="btn btn-primary">Mentés</button>
+    }
+</div>
+
+<script>
+    var parentMenuTemplate = 
+        "<li><div class='input-group m-1'>" +
+        "<input type='text' placeholder='Ikon' class='icon form-control' value='' />" +
+        "<input type='text' placeholder='Cím' class='title form-control' value='' />" +
+        "<input type='text' placeholder='Link' class='href form-control' value='' />" +
+        "<label class='form-control'><input type='checkbox' class='targetblank' /> Új ablakban</label>" +
+        "<div class='input-group-append'>" +
+        "<button class='btn btn-danger' onclick='removeMenuItem(this)'><i class='fas fa-trash'></i></button>" +
+        "</div></div></li>";
+      
+    $(document).ready(function() {   
+        if("@Model.IsSuccess" == "True") {
+            reloadContent();
+        } else {     
+            $("#menuItemsList .icon").each(function() {
+                autocomplete($(this).get(0), iconNames);
+            });
+        }
+    });
+    
+    function addMenuItem() {
+        let appended = $("#menuItemsList").append(parentMenuTemplate);
+        autocomplete(appended.children("li:last-child").find('.icon').get(0), iconNames);
+    }
+
+    function removeMenuItem(element) {
+        $(element).parent().parent().parent().remove();
+    }
+    
+    function getMenuItemList() {
+        var items = [];
+        $("#menuItemsList > li").each(function() {
+            var item = {
+                Icon: $(this).find('.icon').val(),
+                Title: $(this).find('.title').val(),
+                Href: $(this).find('.href').val(),
+                TargetBlank: $(this).find('.targetblank').is(':checked') ? true : false,
+                MenuItems: []
+            };            
+            items.push(item);
+        });
+        return items;
+    }
+
+    function saveComponentData() {
+      var footerForm = $('#projectDataForm').serializeObject();
+        footerForm.MenuItems = getMenuItemList();
+         $.ajax({
+            type: "POST",
+            url: "@Url.Action("SaveFooterComponent", "Editor")",
+            data: footerForm,
+            success: function (res) {
+                $('#componentEditorModal').modal('show').find('.modal-content').html(res);                
+            }
+        });
+    }
+</script>

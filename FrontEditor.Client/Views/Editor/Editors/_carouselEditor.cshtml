@@ -1,2 +1,219 @@
 @using FrontEditor.Client.Models.EditorModels
-@model EditorCarouselViewModel
+@model EditCarouselComponentViewModel
+
+<div class="modal-header">
+    <h5 class="modal-title">@(Model.ComponentIndex < 0 ? "Komponens létrehozása" : Model.ComponentName + " - Szerkesztés")</h5>
+    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+        <span aria-hidden="true">&times;</span>
+    </button>
+</div>
+<div class="modal-body">
+    @if(Model.IsSuccess)
+    {
+        <div class="alert alert-success" role="alert">
+            A komponens mentése sikeresen megtörtént!
+        </div>        
+    }  
+    else 
+    {             
+        <div asp-validation-summary="ModelOnly" class="alert alert-danger" role="alert">
+            @Model.ErrorText
+        </div>
+        <div class="accordion" id="editorAccordion">
+            <form method="post" id="projectDataForm">
+                <input asp-for="ProjectId" type="hidden" />
+                <input asp-for="ComponentIndex" type="hidden" />
+            <div class="card">
+                <div class="card-header" id="headingBase">
+                    <h2 class="mb-0">
+                        <button class="btn btn-link btn-block text-left" type="button" data-toggle="collapse" data-target="#collapseBase" aria-expanded="true" aria-controls="collapseBase">
+                        Alapadatok
+                        </button>
+                    </h2>
+                </div>
+                <div id="collapseBase" class="collapse show" aria-labelledby="headingBase" data-parent="#editorAccordion">
+                    <div class="card-body">
+                        <div class="form-group">                                        
+                            <label asp-for="ComponentName">@Html.DisplayNameFor(m => m.ComponentName)</label>
+                            @if(Model.ComponentIndex >= 0) {
+                                <input asp-for="ComponentName" type="hidden" class="form-control" />      
+                                <input type="text" class="form-control" value="@Model.ComponentName" disabled/> 
+                            } else {
+                                <input asp-for="ComponentName" class="form-control" />  
+                            }       
+                            <span asp-validation-for="ComponentName" class="text-danger"></span>
+                        </div>              
+                        <div class="form-group">                                        
+                            <label asp-for="ComponentId">@Html.DisplayNameFor(m => m.ComponentId)</label>
+                            @if(Model.ComponentIndex >= 0) {
+                                <input asp-for="ComponentId" type="hidden" class="form-control" />      
+                                <input type="text" class="form-control" value="@Model.ComponentId" disabled/> 
+                            } else {
+                                <input asp-for="ComponentId" class="form-control" />  
+                            }  
+                            <span asp-validation-for="ComponentId" class="text-danger"></span>
+                        </div>   
+                        <div class="form-group">                                        
+                            <label asp-for="HeightSize">@Html.DisplayNameFor(m => m.HeightSize)</label>
+                            <input asp-for="HeightSize" class="form-control" /> 
+                            <span asp-validation-for="HeightSize" class="text-danger"></span>
+                        </div>                       
+                    </div>
+                </div>
+            </div>
+            <div class="card">
+                <div class="card-header" id="headingMenuSettings">
+                <h2 class="mb-0">
+                    <button class="btn btn-link btn-block text-left collapsed" type="button" data-toggle="collapse" data-target="#collapseMenuSettings" aria-expanded="false" aria-controls="collapseMenuSettings">
+                    Beállítások
+                    </button>
+                </h2>
+                </div>
+                <div id="collapseMenuSettings" class="collapse" aria-labelledby="headingMenuSettings" data-parent="#editorAccordion">
+                <div class="card-body">                     
+                    <div>                                       
+                        <label asp-for="ContainerMode"><input asp-for="ContainerMode" /> @Html.DisplayNameFor(m => m.ContainerMode)</label>
+                        <span asp-validation-for="ContainerMode" class="text-danger"></span>
+                    </div>                       
+                    <div>                                       
+                        <label asp-for="Controls"><input asp-for="Controls" /> @Html.DisplayNameFor(m => m.Controls)</label>
+                        <span asp-validation-for="Controls" class="text-danger"></span>
+                    </div>                  
+                    <div>                                       
+                        <label asp-for="Indicators"><input asp-for="Indicators" /> @Html.DisplayNameFor(m => m.Indicators)</label>
+                        <span asp-validation-for="Indicators" class="text-danger"></span>
+                    </div>                
+                    <div>                                       
+                        <label asp-for="AutoRun"><input asp-for="AutoRun" /> @Html.DisplayNameFor(m => m.AutoRun)</label>
+                        <span asp-validation-for="AutoRun" class="text-danger"></span>
+                    </div>  
+                    <div class="form-group">                                        
+                        <label asp-for="PageInterval">@Html.DisplayNameFor(m => m.PageInterval)</label>
+                        <input asp-for="PageInterval" class="form-control" /> 
+                        <span asp-validation-for="PageInterval" class="text-danger"></span>
+                    </div>     
+                    <div class="form-group">                                        
+                        <label asp-for="AnimationMode">@Html.DisplayNameFor(m => m.AnimationMode)</label> 
+                        <select asp-for="AnimationMode" class="form-control" asp-items="@(new SelectList(Model.AnimationTypes,"Value" ,"Key"))"></select>        
+                        <span asp-validation-for="AnimationMode" class="text-danger"></span>
+                    </div>             
+                    <div>                                       
+                        <label asp-for="Captions"><input asp-for="Captions" /> @Html.DisplayNameFor(m => m.Captions)</label>
+                        <span asp-validation-for="Captions" class="text-danger"></span>
+                    </div>  
+                    <div class="form-group">                                        
+                        <label asp-for="CaptionsTextColor">@Html.DisplayNameFor(m => m.CaptionsTextColor)</label>
+                        <input asp-for="CaptionsTextColor" type="color" class="form-control" /> 
+                        <span asp-validation-for="CaptionsTextColor" class="text-danger"></span>
+                    </div>  
+                    <div class="form-group">                                        
+                        <label asp-for="CaptionsTextBackgroundColor">@Html.DisplayNameFor(m => m.CaptionsTextBackgroundColor)</label>
+                        <input asp-for="CaptionsTextBackgroundColor" type="color" class="form-control" /> 
+                        <span asp-validation-for="CaptionsTextBackgroundColor" class="text-danger"></span>
+                    </div>  
+                </div>
+                </div>
+            </div>   
+        </form>   
+        <div class="card">
+            <div class="card-header" id="headingMenu">
+                <h2 class="mb-0">
+                    <button class="btn btn-link btn-block text-left collapsed" type="button" data-toggle="collapse" data-target="#collapseMenu" aria-expanded="false" aria-controls="collapseMenu">
+                    Képek
+                    </button>
+                </h2>
+            </div>
+            <div id="collapseMenu" class="collapse" aria-labelledby="headingMenu" data-parent="#editorAccordion">
+            <div class="card-body">
+                <div class="form-group">          
+                    <label asp-for="CarouselItems">@Html.DisplayNameFor(m => m.CarouselItems)</label><br />
+                    <button class="btn btn-primary" onclick="addCarouselItem()">Hozzáadás</button><br />
+                    <ol id="carouselItemsList" class="menu-item-list">
+                        @foreach (CarouselItem item in Model.CarouselItems)
+                        {
+                            <li>
+                                <div class="input-group m-1">
+                                    <input type="text" placeholder="Kép" class="image form-control h-auto" value="@item.Image" />
+                                    <input type="text" placeholder="Cím" class="title form-control h-auto" value="@item.Title" />
+                                    <textarea placeholder="Leírás" class="description form-control">@item.Description</textarea>                                  
+                                    <div class="input-group-append">
+                                        <button class="btn btn-danger" onclick="removeCarouselItem(this)"><i class="fas fa-trash"></i></button>
+                                    </div>
+                                </div> 
+                            </li>
+                        }            
+                    </ol>
+                </div>
+            </div>
+            </div>               
+        </div> 
+        </div>        
+    }         
+</div>
+<div class="modal-footer">
+    @if(Model.IsSuccess)
+    {
+        <button type="button" class="btn btn-primary" data-dismiss="modal">Rendben</button>
+    }
+    else 
+    {
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Mégse</button>
+        <button type="submit" onclick="saveComponentData()" class="btn btn-primary">Mentés</button>
+    }
+</div>
+
+<script>
+    var carouselItemTemplate = 
+        "<li><div class='input-group m-1'>" +
+        "<input type='text' placeholder='Kép' class='image form-control h-auto' />" +
+        "<input type='text' placeholder='Cím' class='title form-control h-auto' />"+
+        "<textarea placeholder='Leírás' class='description form-control'></textarea>"+
+        "<div class='input-group-append'>" +
+        "<button class='btn btn-danger' onclick='removeCarouselItem(this)'><i class='fas fa-trash'></i></button>" +                            
+        "</div></div></li>";
+
+    $(document).ready(function() {  
+        if("@Model.IsSuccess" == "True") {
+            reloadContent();
+        } else {      
+            $("#carouselItemsList .image").each(function() {
+                autocomplete($(this).get(0), files);
+            });
+        }
+    });
+
+    function addCarouselItem() {
+        let appended = $("#carouselItemsList").append(carouselItemTemplate);
+        autocomplete(appended.children("li:last-child").find('.image').get(0), files);
+    }
+
+    function removeCarouselItem (element) {
+        $(element).parent().parent().parent().remove();
+    }
+    
+    function getCarouselItemList() {
+        var items = [];
+        $("#carouselItemsList > li").each(function() {
+            var item = {
+                Image: $(this).find('.image').val(),
+                Title: $(this).find('.title').val(),
+                Description: $(this).find('.description').val()
+            };
+            items.push(item);
+        });
+        return items;
+    }
+
+    function saveComponentData() {
+      var carouselForm = $('#projectDataForm').serializeObject();
+        carouselForm.CarouselItems = getCarouselItemList();
+         $.ajax({
+            type: "POST",
+            url: "@Url.Action("SaveCarouselComponent", "Editor")",
+            data: carouselForm,
+            success: function (res) {
+                $('#componentEditorModal').modal('show').find('.modal-content').html(res);                
+            }
+        });
+    }
+</script>

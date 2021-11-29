@@ -1,28 +1,43 @@
 @model FrontEditor.Client.Models.EditorModels.EditorViewModel
-@{    
-    Layout = "_Editor";
-    ViewBag.Title = Model.ProjectData.Title + " Editor";     
+@{
+  Layout = "_Editor";
+  ViewBag.Title = Model.ProjectData.Title + " Editor";
 }
 
 <div id="navbar-sidebar-container">
-    @Html.Partial("_navbarSidebar", Model)
+  @Html.Partial("_navbarSidebar", Model)
 </div>
 
 <div id="content-wrapper" class="d-flex flex-column">
-    <div id="content">
-        @Html.Partial("_navbarTop", Model)
-        <div class="container-fluid" id="editorPanelContainer">
-            @Html.Partial("_editorPanel", Model)            
-        </div>
+  <div id="content">
+    @Html.Partial("_navbarTop", Model)
+    <div class="container-fluid" id="editorPanelContainer">
+      @Html.Partial("_editorPanel", Model)
     </div>
+  </div>
 </div>
 
 <script>
+  var removeComponentIndex = -1;
+
   function showMessage(title, message) {
-      $("#messageModal .modal-title").html(title);
-      $("#messageModal .modal-body").html(message);      
-      $('#messageModal').modal('show');
-    }
+    $("#messageModal .modal-title").html(title);
+    $("#messageModal .modal-body").html(message);
+    $('#messageModal').modal('show');
+  }
+
+  function reloadContent() {
+    let projectId = @(Model.ProjectData.ProjectId);
+    $("#editorPanelContainer").html("Adatok betöltése folyamatban...");
+    $.ajax({
+      type: "GET",
+      url: "@Url.Action("EditorPanel", "Editor")",
+      data: { projectId: projectId },
+      success: function (res) {
+        $("#editorPanelContainer").html(res);
+      }
+    });
+  }
 </script>
 
 <!-- Message dialog! -->
@@ -54,11 +69,12 @@
         </button>
       </div>
       <div class="modal-body">
-         Biztosan törli a kiválasztott képet a projektből? Ezzel csak a fájl törlődik, a hivatkozó elemek nem.
+        Biztosan törli a kiválasztott képet a projektből? Ezzel csak a fájl törlődik, a hivatkozó elemek nem.
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-secondary" data-dismiss="modal">Bezár</button>
-        <button type="button" onclick="confirmDeleteProjectImage()" class="btn btn-primary" data-dismiss="modal">Törlés</button>
+        <button type="button" onclick="confirmDeleteProjectImage()" class="btn btn-primary"
+          data-dismiss="modal">Törlés</button>
       </div>
     </div>
   </div>
@@ -68,6 +84,37 @@
 <div class="modal fade" id="imageUploadModal" tabindex="-1" role="dialog" aria-hidden="true">
   <div class="modal-dialog" role="document">
     <div class="modal-content">
+    </div>
+  </div>
+</div>
+
+<!-- Component editor dialog! -->
+<div class="modal fade" id="componentEditorModal" tabindex="-1" role="dialog" aria-hidden="true" data-backdrop="static">
+  <div class="modal-dialog modal-lg" role="document">
+    <div class="modal-content">
+    </div>
+  </div>
+</div>
+
+<!-- Confirm delete component dialog! -->
+<div class="modal fade" id="deleteComponentModal" tabindex="-1" role="dialog" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Komponens törlése</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        Biztosan törli a kiválasztott komponenst a projektből? Ezzel végleg törli a komponenst és a hozzá mentett
+        adatokat is..
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Bezár</button>
+        <button type="button" onclick="confirmDeleteComponent()" class="btn btn-primary"
+          data-dismiss="modal">Törlés</button>
+      </div>
     </div>
   </div>
 </div>

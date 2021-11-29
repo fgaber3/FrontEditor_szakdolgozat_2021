@@ -1,7 +1,7 @@
 @using FrontEditor.Client.Models.EditorModels
 @model EditorCarouselViewModel
 
-<div class='@(Model.ContainerMode ? "container my-1" : "mb-1")'>
+<div class='@(Model.ContainerMode ? "container my-1" : "mb-1") py-4'>
   <div id="carousel@(Model.ComponentId)" class='carousel slide @(Model.AnimationMode == SliderAnimationModeEnum.Fade ? "carousel-fade" : "" )' @(Model.AutoRun ? "data-ride=carousel" : "")>
     @if(Model.Indicators)
     {      
