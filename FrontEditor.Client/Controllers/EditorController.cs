@@ -117,7 +117,7 @@ namespace FrontEditor.Client.Controllers
                     new EditFooterComponentViewModel((EditorFooterViewModel)(editor.EditorData.Blocks[componentIndex]), projectId, componentIndex);
                 return PartialView("Editors/" + editor.EditorData.Blocks[componentIndex].ViewName, model);
             }
-            return PartialView("Editors/_unknownType>");
+            return PartialView("Editors/_unknownType");
         }
 
         [HttpPost]

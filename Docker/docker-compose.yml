@@ -1,26 +1,27 @@
 version: '3.6'
 
 services:
-    db:
-        image: mysql:8.0.23
-        command: --default-authentication-plugin=mysql_native_password
-        restart: always
-        ports:
-          - 3306:3306
-        networks:
-          - fronteditor
-        environment:
-            MYSQL_ROOT_PASSWORD: root
-        volumes:
-            - ./init:/docker-entrypoint-initdb.d
-    client:
-        image: fronteditorclient:latest
-        ports:
-            - 5000:5000
-            - 5001:5001
-            - 3353:3353
-            - 3000:80
-        networks:
-          - fronteditor
+  db:
+    image: mysql:8.0.23
+    command: --default-authentication-plugin=mysql_native_password
+    restart: always
+    ports:
+      - 3306:3306
+    networks:
+      - fronteditor
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+    volumes:
+      - ./init:/docker-entrypoint-initdb.d
+  client:
+    image: fronteditorclient:latest
+    restart: always
+    ports:
+      - 5000:5000
+      - 5001:5001
+      - 3353:3353
+      - 3000:80
+    networks:
+      - fronteditor
 networks:
-    fronteditor:
+  fronteditor: null
